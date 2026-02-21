@@ -112,6 +112,7 @@ class TaskConfig:
         self.equal_splits = False
         self.user_transmission = False
         self.hybrid_leech = False
+        self.auto_merge = False
         self.extract = False
         self.compress = False
         self.select = False
@@ -535,6 +536,8 @@ class TaskConfig:
                 )
             )
 
+            self.auto_merge = self.user_dict.get("AUTO_MERGE", False)
+
             if self.thumb != "none" and is_telegram_link(self.thumb):
                 msg = (await get_tg_link_message(self.thumb))[0]
                 self.thumb = (
@@ -674,6 +677,12 @@ class TaskConfig:
             )
 
     async def proceed_extract(self, dl_path, gid):
+        if not (
+            ".zip" in self.name.lower()
+            or (self.link and isinstance(self.link, str) and ".zip" in self.link.lower())
+        ):
+            LOGGER.info(f"Skipping extraction for {self.name} as it is not a .zip file.")
+            return dl_path
         pswd = self.extract if isinstance(self.extract, str) else ""
         self.files_to_proceed = []
         if self.is_file and is_archive(dl_path):
@@ -1136,11 +1145,16 @@ class TaskConfig:
                 else:
                     self.subsize = f_size
                     self.subname = file_
-                parts = -(-f_size // self.split_size)
-                if self.equal_splits:
-                    split_size = (f_size // parts) + (f_size % parts)
+
+                if f_size > 4294967296: # 4GB
+                    split_size = 4187593113 # 3.9GB
                 else:
                     split_size = self.split_size
+
+                parts = -(-f_size // split_size)
+                if self.equal_splits and f_size <= 4294967296:
+                    split_size = (f_size // parts) + (f_size % parts)
+
                 if not self.as_doc and (await get_document_type(f_path))[0]:
                     self.progress = True
                     res = await ffmpeg.split(f_path, file_, parts, split_size)
@@ -1160,3 +1174,58 @@ class TaskConfig:
 
     def merge_metadata_dicts(self, default_dict, cmd_dict):
         return self.metadata_processor.merge_dicts(default_dict, cmd_dict)
+
+    async def proceed_merge(self, dl_path, gid):
+        if not self.auto_merge or self.is_file:
+            return dl_path
+
+        video_files = []
+        for dirpath, _, files in await sync_to_async(walk, dl_path):
+            for file in files:
+                if (await get_document_type(ospath.join(dirpath, file)))[0]:
+                    video_files.append(ospath.join(dirpath, file))
+
+        if len(video_files) <= 1:
+            return dl_path
+
+        video_files.sort()
+
+        # Check if they are parts
+        part_regex = r"\.part\d+(\.|$)|(\.\d{3}$)"
+        parts = [f for f in video_files if re.search(part_regex, f)]
+
+        if len(parts) <= 1:
+            return dl_path
+
+        # Check if they have the same extension and base name
+        base_names = set()
+        extensions = set()
+        for f in parts:
+            name = ospath.basename(f)
+            match = re.search(r"(\.[a-z0-9]+)(\.part\d+(\.|$)|(\.\d{3}$))", name, re.I)
+            if match:
+                ext = match.group(1)
+                base_name = name[:match.start()]
+            else:
+                ext = ospath.splitext(name)[1]
+                base_name = re.sub(part_regex, "", name)
+            extensions.add(ext)
+            base_names.add(base_name)
+
+        if len(extensions) > 1 or len(base_names) > 1:
+            LOGGER.info("Different formats or base names detected, skipping auto merge.")
+            return dl_path
+
+        ffmpeg = FFMpeg(self)
+        async with task_dict_lock:
+            from .mirror_leech_utils.status_utils.ffmpeg_status import FFmpegStatus
+            task_dict[self.mid] = FFmpegStatus(self, ffmpeg, gid, "Merge")
+
+        LOGGER.info(f"Merging parts for: {list(base_names)[0]}")
+        res = await ffmpeg.merge(parts, list(base_names)[0] + list(extensions)[0])
+        if res:
+            for f in parts:
+                with suppress(Exception):
+                    await remove(f)
+            return res
+        return dl_path

@@ -28,6 +28,7 @@ class MirrorStatus:
     STATUS_PAUSED = "Pause"
     STATUS_ARCHIVE = "Archive"
     STATUS_EXTRACT = "Extract"
+    STATUS_MERGE = "Merge"
     STATUS_SPLIT = "Split"
     STATUS_CHECK = "CheckUp"
     STATUS_SEED = "Seed"
@@ -67,6 +68,7 @@ STATUSES = {
     "QU": MirrorStatus.STATUS_QUEUEUP,
     "AR": MirrorStatus.STATUS_ARCHIVE,
     "EX": MirrorStatus.STATUS_EXTRACT,
+    "MG": MirrorStatus.STATUS_MERGE,
     "SD": MirrorStatus.STATUS_SEED,
     "CL": MirrorStatus.STATUS_CLONE,
     "CM": MirrorStatus.STATUS_CONVERT,
@@ -195,9 +197,9 @@ def speed_string_to_bytes(size_text: str):
 def get_progress_bar_string(pct):
     pct = float(str(pct).strip("%"))
     p = min(max(pct, 0), 100)
-    cFull = int(p // 8)
-    p_str = "⬢" * cFull
-    p_str += "⬡" * (12 - cFull)
+    cFull = int(p // 10)
+    p_str = "■" * cFull
+    p_str += "□" * (10 - cFull)
     return f"[{p_str}]"
 
 
@@ -253,7 +255,23 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             msg += f"\n┠ <b>Processed</b> → <i>{task.processed_bytes()}{subsize} of {task.size()}</i>"
             if count:
                 msg += f"\n┠ <b>Count:</b> → <b>{count}</b>"
-            msg += f"\n┠ <b>Status</b> → <b>{tstatus}</b>"
+            status_icon = {
+                MirrorStatus.STATUS_DOWNLOAD: "📥",
+                MirrorStatus.STATUS_EXTRACT: "📦",
+                MirrorStatus.STATUS_MERGE: "🔀",
+                MirrorStatus.STATUS_METADATA: "🏷",
+                MirrorStatus.STATUS_SPLIT: "✂",
+                MirrorStatus.STATUS_UPLOAD: "📤",
+                MirrorStatus.STATUS_CONVERT: "⚙️",
+                MirrorStatus.STATUS_SAMVID: "🎞",
+                MirrorStatus.STATUS_ARCHIVE: "🗜",
+                MirrorStatus.STATUS_QUEUEDL: "⏳",
+                MirrorStatus.STATUS_QUEUEUP: "⏳",
+                MirrorStatus.STATUS_PAUSED: "⏸",
+                MirrorStatus.STATUS_CHECK: "🔍",
+                MirrorStatus.STATUS_SEED: "🌱",
+            }.get(tstatus, "🔄")
+            msg += f"\n┠ <b>Status</b> → <b>{status_icon} {tstatus}</b>"
             msg += f"\n┠ <b>Speed</b> → <i>{task.speed()}</i>"
             msg += f"\n┠ <b>Time</b> → <i>{task.eta()} of {get_readable_time(elapsed + get_raw_time(task.eta()))} ( {get_readable_time(elapsed)} )</i>"
             if tstatus == MirrorStatus.STATUS_DOWNLOAD and (

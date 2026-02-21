@@ -10,7 +10,7 @@ from aiofiles.os import makedirs, remove
 from aiofiles.os import path as aiopath
 from langcodes import Language
 from pyrogram.filters import create
-from pyrogram.handlers import MessageHandler
+from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 
 from bot.helper.ext_utils.status_utils import get_readable_file_size
 
@@ -287,6 +287,11 @@ Here I will explain how to use mltb.* which is reference to files you want to wo
         "PixelDrain API Key",
         "<i>Send your PixelDrain API Key.</i> \n┖ <b>Time Left :</b> <code>60 sec</code>",
     ),
+    "AUTO_MERGE": (
+        "True or False",
+        "Auto Merge multiple video parts after extraction.",
+        "Toggle Auto Merge on or off.",
+    ),
 }
 
 
@@ -506,6 +511,13 @@ async def get_user_settings(from_user, stype="main"):
         else:
             thumb_layout = "None"
 
+        if user_dict.get("AUTO_MERGE", False):
+            buttons.data_button("Disable Auto Merge", f"userset {user_id} tog AUTO_MERGE f")
+            auto_merge = "Enabled"
+        else:
+            buttons.data_button("Enable Auto Merge", f"userset {user_id} tog AUTO_MERGE t")
+            auto_merge = "Disabled"
+
         buttons.data_button("Back", f"userset {user_id} back", "footer")
         buttons.data_button("Close", f"userset {user_id} close", "footer")
         btns = buttons.build_menu(2)
@@ -524,7 +536,8 @@ async def get_user_settings(from_user, stype="main"):
 ┠ Leech Destination → <code>{leech_dest}</code>
 ┠ Leech by <b>{leech_method}</b> session
 ┠ Mixed Leech → <b>{hybrid_leech}</b>
-┖ Thumbnail Layout → <b>{thumb_layout}</b>
+┠ Thumbnail Layout → <b>{thumb_layout}</b>
+┖ Auto Merge → <b>{auto_merge}</b>
 """
 
     elif stype == "uphoster":
@@ -1439,6 +1452,17 @@ async def edit_user_settings(client, query):
     else:
         await query.answer()
         await delete_message(message, message.reply_to_message)
+
+
+@new_task
+async def toggle_auto_merge(_, message):
+    user_id = message.from_user.id
+    user_dict = user_data.get(user_id, {})
+    auto_merge = user_dict.get("AUTO_MERGE", False)
+    update_user_ldata(user_id, "AUTO_MERGE", not auto_merge)
+    await database.update_user_data(user_id)
+    text = f"Auto Merge is now {'Enabled' if not auto_merge else 'Disabled'}."
+    await send_message(message, text)
 
 
 @new_task

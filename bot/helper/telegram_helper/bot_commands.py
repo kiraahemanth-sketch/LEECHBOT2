@@ -48,6 +48,7 @@ class BotCommands:
         "RmSudo": ["rmsudo", "rs"],
         "BotSet": ["bsetting", "bs"],
         "UserSet": ["usetting", "us"],
+        "UserSet2": "us2",
         "Select": ["select", "sel"],
         "NzbSearch": ["nzbsearch", "ns"],
         "Plugins": "plugins",

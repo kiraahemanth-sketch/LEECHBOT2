@@ -1,189 +1,117 @@
 <p align="center">
-    <a href="https://github.com/SilentDemonSD/WZML-X">
+    <a href="https://t.me/ALONEKINGSTAR77">
         <kbd>
-            <img width="250" src="https://graph.org/file/639fe4239b78e5862b302.jpg" alt="WZML-X Logo">
+            <img width="250" src="https://graph.org/file/639fe4239b78e5862b302.jpg" alt="⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Logo">
         </kbd>
     </a>
-
-<i>This repository is a feature-enhanced version of the [mirror-leech-telegram-bot](https://github.com/anasty17/mirror-leech-telegram-bot). It integrates various improvements from multiple sources, expanding functionality while maintaining efficiency. Unlike the base repository, this version is fully deployable on Heroku.</i>
-
 </p>
 
-<div align=center>
+<h1 align="center">⚡ ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ ⚡</h1>
 
-[![](https://img.shields.io/github/repo-size/weebzone/WZML-X?color=green&label=Repo%20Size&labelColor=292c3b)](#) [![](https://img.shields.io/github/commit-activity/m/weebzone/WZML-X?logo=github&labelColor=292c3b&label=Github%20Commits)](#) [![](https://img.shields.io/github/license/weebzone/WZML-X?style=flat&label=License&labelColor=292c3b)](#)|[![](https://img.shields.io/github/issues-raw/weebzone/WZML-X?style=flat&label=Open%20Issues&labelColor=292c3b)](#) [![](https://img.shields.io/github/issues-closed-raw/weebzone/WZML-X?style=flat&label=Closed%20Issues&labelColor=292c3b)](#) [![](https://img.shields.io/github/issues-pr-raw/weebzone/WZML-X?style=flat&label=Open%20Pull%20Requests&labelColor=292c3b)](#) [![](https://img.shields.io/github/issues-pr-closed-raw/weebzone/WZML-X?style=flat&label=Closed%20Pull%20Requests&labelColor=292c3b)](#)
-:---:|:---:|
-[![](https://img.shields.io/github/languages/count/weebzone/WZML-X?style=flat&label=Total%20Languages&labelColor=292c3b&color=blueviolet)](#) [![](https://img.shields.io/github/languages/top/weebzone/WZML-X?style=flat&logo=python&labelColor=292c3b)](#) [![](https://img.shields.io/github/last-commit/weebzone/WZML-X?style=flat&label=Last%20Commit&labelColor=292c3b&color=important)](#) [![](https://badgen.net/github/branches/weebzone/WZML-X?label=Total%20Branches&labelColor=292c3b)](#)|[![](https://img.shields.io/github/forks/weebzone/WZML-X?style=flat&logo=github&label=Forks&labelColor=292c3b&color=critical)](#) [![](https://img.shields.io/github/stars/weebzone/WZML-X?style=flat&logo=github&label=Stars&labelColor=292c3b&color=yellow)](#) [![](https://badgen.net/docker/pulls/codewithweeb/weebzone?icon=docker&label=Pulls&labelColor=292c3b&color=blue)](#)
-[![](https://img.shields.io/badge/Telegram%20Channel-Join-9cf?style=for-the-badge&logo=telegram&logoColor=blue&style=flat&labelColor=292c3b)](https://t.me/WZML_X) |[![](https://img.shields.io/badge/Support%20Group-Join-9cf?style=for-the-badge&logo=telegram&logoColor=blue&style=flat&labelColor=292c3b)](https://t.me/WZML_Support) |
-
-</div>
-
----
-Below is a refined version that preserves all the important details while enhancing readability and design :
+<p align="center">
+<i>An advanced, feature-rich Mirror-Leech Telegram Bot. Fully optimized and production-ready.</i>
+</p>
 
 ---
 
-# Deployment Guide (VPS)
+## 🌟 Features
 
-<details>
-  <summary><strong>View All Steps <kbd>Click Here</kbd></strong></summary>
-
----
-
-## 1. Prerequisites
-
-- **Tutorial Video from A to Z (Latest Video)**
-- Special thanks to [Wiszky](https://github.com/vishnoe115)
-
-[![See Video](https://img.shields.io/badge/See%20Video-black?style=for-the-badge&logo=YouTube)](https://youtu.be/xzLOLyKYl54)
+- **Smart Auto Extract**: Automatically extracts files ONLY if the filename or link contains `.zip`.
+- **Advanced Auto Merge**: Toggle with `/us2`. Merges multiple video parts (.part1, .part2, .001, etc.) automatically using FFmpeg concat (no re-encode).
+- **Auto Split**: Automatically splits files larger than 4GB into 3.9GB parts for seamless Telegram upload.
+- **Global Metadata**: Apply custom metadata to your files after merging.
+- **Advanced UI**: Modern buttons, clean inline keyboard, and real-time progress bars for all stages.
+- **Fully Optimized**: Async operations, low RAM usage, and automatic cleanup of temporary files.
+- **Multi-Cloud Support**: Support for GDrive, Rclone, and various DDL hosts.
 
 ---
 
-## 2. Installing Requirements
+## 🔄 Workflow
 
-Clone this repository:
-
-```bash
-git clone https://github.com/SilentDemonSD/WZML-X mirrorbot/ && cd mirrorbot
-```
-
----
-
-## 3. Build and Run the Docker Image
-
-*Make sure you mount the app folder and install Docker following the official documentation.*
-
-There are two methods to build and run the Docker image:
-
-### 3.1 Using Official Docker Commands
-
-- **Start Docker daemon** (skip if already running):
-
-  ```bash
-  sudo dockerd
-  ```
-
-- **Build the Docker image:**
-
-  ```bash
-  sudo docker build . -t wzmlx
-  ```
-
-- **Run the image:**
-
-  ```bash
-  sudo docker run -p 80:80 -p 8080:8080 wzmlx
-  ```
-
-- **To stop the running image:**
-
-  First, list running containers:
-
-  ```bash
-  sudo docker ps
-  ```
-
-  Then, stop the container using its ID:
-
-  ```bash
-  sudo docker stop <container_id>
-  ```
+1. **Download**: Bot downloads the requested link/file.
+2. **Smart Extract**: If `.zip` is detected in the name/link, it extracts the content.
+3. **Auto Merge**: If `/us2` is enabled, the bot detects video parts and merges them using FFmpeg `-c copy`.
+4. **Metadata**: Applies user-defined metadata (if enabled via `/us`).
+5. **Auto Split**: If the final result exceeds 4GB, it splits into 3.9GB parts.
+6. **Upload**: Sends files to Telegram or mirrors them to cloud storage.
+7. **Cleanup**: Automatically deletes zip files, parts, and temporary folders.
 
 ---
 
-### 3.2 Using docker-compose (Recommended)
+## ⚙️ Commands
 
-**Note:** If you want to use ports other than 80 and 8080 for torrent file selection and rclone serve respectively, update them in [docker-compose.yml](https://github.com/weebzone/WZML-X/blob/master/docker-compose.yml).
-
-- **Install docker-compose:**
-
-  ```bash
-  sudo apt install docker-compose
-  ```
-
-- **Build and run the Docker image (or view the current running image):**
-
-  ```bash
-  sudo docker-compose up
-  ```
-
-- **After editing files (e.g., using nano to edit start.sh), rebuild:**
-
-  ```bash
-  sudo docker-compose up --build
-  ```
-
-- **To stop the running image:**
-
-  ```bash
-  sudo docker-compose stop
-  ```
-
-- **To restart the image:**
-
-  ```bash
-  sudo docker-compose start
-  ```
-
-- **To view the latest logs from the running container (after mounting the folder):**
-
-  ```bash
-  sudo docker-compose up
-  ```
-
-- **Tutorial Video for docker-compose and checking ports:**
-
-  [![See Video](https://img.shields.io/badge/See%20Video-black?style=for-the-badge&logo=YouTube)](https://youtu.be/c8_TU1sPK08)
-
-
-------
-
-#### Docker Notes
-
-**IMPORTANT NOTES**:
-
-1. Set `BASE_URL_PORT` and `RCLONE_SERVE_PORT` variables to any port you want to use. Default is `80` and `8080` respectively.
-2. You should stop the running image before deleting the container and you should delete the container before the image.
-3. To delete the container (this will not affect on the image):
-
-```
-sudo docker container prune
-```
-
-4. To delete te images:
-
-```
-sudo docker image prune -a
-```
-
-5. Check the number of processing units of your machine with `nproc` cmd and times it by 4, then edit `AsyncIOThreadsCount` in qBittorrent.conf.
-    
-  </details></li></ol>
-</details>
-    
-------
-
-# Deployment Guide (Heroku)
-
-<details>
-  <summary><strong>View All Steps <kbd>Click Here</kbd></strong></summary>
+- `/us`: User Settings (Metadata, Leech Settings, etc.)
+- `/us2`: Toggle Auto Merge (Enabled/Disabled)
+- `/mirror`: Mirror to Cloud
+- `/leech`: Leech to Telegram
+- `/status`: Check active tasks
 
 ---
 
-**Check the Docs Here :** [Click Here](https://github.com/SilentDemonSD/WZ-Deploy/tree/main?tab=readme-ov-file#2%EF%B8%8F⃣-method-2-github-workflow-guide)
+## 🚀 Deployment Guides
+
+### 💜 HEROKU DEPLOY
+
+1. **Required Variables**:
+   - `BOT_TOKEN`
+   - `API_ID`
+   - `API_HASH`
+   - `MONGO_DB_URI`
+   - `OWNER_ID`
+2. **One-Click Deploy**:
+   [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡)
+3. **Worker Dyno**: After deployment, go to the Resources tab and enable the `worker` dyno.
+
+### 💙 KOYEB DEPLOY
+
+1. Use the provided `Dockerfile`.
+2. Set the necessary environment variables in Koyeb Dashboard.
+3. **Note**: Persistent storage is recommended for large downloads.
+
+### 🧡 VPS DEPLOY (Ubuntu 22.04)
+
+1. **Install FFmpeg and Python**:
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   sudo apt install python3 python3-pip ffmpeg -y
+   ```
+2. **Clone and Run**:
+   ```bash
+   git clone https://github.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ mirrorbot/
+   cd mirrorbot
+   pip3 install -r requirements.txt
+   bash start.sh
+   ```
+3. **One-Click Deploy**:
+   ```bash
+   bash <(curl -sL https://raw.githubusercontent.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡/master/deploy_vps.sh)
+   ```
+4. **Keep Alive**: Use `screen` or `tmux` to keep the bot running. For auto-restart, use `systemd`.
+
+### 📱 DareMote Mobile Deploy (Termux)
+
+1. **Install Termux** from F-Droid.
+2. **Run One-Click Script**:
+   ```bash
+   bash <(curl -sL https://raw.githubusercontent.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡/master/deploy_vps.sh)
+   ```
+3. **Manual Install**:
+   - `pkg update && pkg upgrade`
+   - `pkg install python ffmpeg git`
+   - `git clone https://github.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡`
+   - `cd ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ && pip install -r requirements.txt`
+   - `bash start.sh`
 
 ---
-
-</details>
 
 ## 🏅 **Bot Authors**
-<details>
-    <summary><b>Click Here For Description</b></summary>
 
-|<img width="80" src="https://avatars.githubusercontent.com/u/105407900?v=4">|<img width="80" src="https://avatars.githubusercontent.com/u/93116400?v=4">|<img width="80" src="https://avatars.githubusercontent.com/u/113664541?v=4">|<img width="80" src="https://avatars.githubusercontent.com/u/84721324?v=4">|
-|:---:|:---:|:---:|:---:|
-|[`SilentDemonSD`](https://github.com/SilentDemonSD)|[`RjRiajul`](https://github.com/rjriajul)|[`CodeWithWeeb`](https://github.com/weebzone)|[`Maverick`](https://github.com/MajnuRangeela)|
-|Author and DDL, UI Design, More Customs..|Co-Author & Maintainer|Author and Wraps Up Features|Co-Author & Bug Tester|
+|[`alonekingstar77`](https://github.com/alonekingstar77)|[`RjRiajul`](https://github.com/rjriajul)|[`CodeWithWeeb`](https://github.com/weebzone)|
+|:---:|:---:|:---:|
 
-</details>
+---
 
+## 📢 Support & Channel
+
+- **Channel**: [⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Updates](https://t.me/ALONEKINGSTAR77)
+- **Support**: [@alonekingstar77](https://t.me/ALONEKINGSTAR77)

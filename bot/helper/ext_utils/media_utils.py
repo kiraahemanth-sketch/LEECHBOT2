@@ -3,6 +3,7 @@ from contextlib import suppress
 from PIL import Image
 from hashlib import md5
 from aiofiles.os import remove, path as aiopath, makedirs
+import aiofiles
 import json
 from asyncio import (
     create_subprocess_exec,
@@ -753,12 +754,11 @@ class FFMpeg:
         self.clear()
         multi_streams = True
         self._total_time = duration = (await get_media_info(f_path))[0]
-        base_name, extension = ospath.splitext(file_)
         split_size -= 3000000
         start_time = 0
         i = 1
         while i <= parts or start_time < duration - 4:
-            out_path = f_path.replace(file_, f"{base_name}.part{i:03}{extension}")
+            out_path = f"{f_path}.part{i}"
             cmd = [
                 "taskset",
                 "-c",
@@ -850,3 +850,61 @@ class FFMpeg:
             start_time += lpd - 3
             i += 1
         return True
+
+    async def merge(self, parts, output_name):
+        self.clear()
+        durations = await gather(*[get_media_info(f) for f in parts])
+        self._total_time = sum(d[0] for d in durations)
+        dir = ospath.dirname(parts[0])
+        list_file = ospath.join(dir, "merge_list.txt")
+        async with aiofiles.open(list_file, "w") as f:
+            for part in parts:
+                p = part.replace("'", "'\\''")
+                await f.write(f"file '{p}'\n")
+        output = ospath.join(dir, output_name)
+        cmd = [
+            "taskset",
+            "-c",
+            f"{cores}",
+            BinConfig.FFMPEG_NAME,
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-progress",
+            "pipe:1",
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            list_file,
+            "-c",
+            "copy",
+            "-threads",
+            f"{threads}",
+            output,
+        ]
+        if self._listener.is_cancelled:
+            return False
+        self._listener.subproc = await create_subprocess_exec(
+            *cmd, stdout=PIPE, stderr=PIPE
+        )
+        await self._ffmpeg_progress()
+        _, stderr = await self._listener.subproc.communicate()
+        code = self._listener.subproc.returncode
+        await remove(list_file)
+        if self._listener.is_cancelled:
+            return False
+        if code == 0:
+            return output
+        else:
+            if await aiopath.exists(output):
+                await remove(output)
+            try:
+                stderr = stderr.decode().strip()
+            except Exception:
+                stderr = "Unable to decode the error!"
+            LOGGER.error(
+                f"{stderr}. Something went wrong while merging parts. Path: {parts[0]}"
+            )
+        return False

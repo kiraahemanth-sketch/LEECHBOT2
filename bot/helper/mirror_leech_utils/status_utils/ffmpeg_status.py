@@ -41,6 +41,8 @@ class FFmpegStatus:
             return MirrorStatus.STATUS_CONVERT
         elif self._cstatus == "Split":
             return MirrorStatus.STATUS_SPLIT
+        elif self._cstatus == "Merge":
+            return MirrorStatus.STATUS_MERGE
         elif self._cstatus == "Sample Video":
             return MirrorStatus.STATUS_SAMVID
         else:

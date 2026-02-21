@@ -182,10 +182,10 @@ async def get_streams(file):
         return None
 
     try:
-        return json.loads(stdout)["streams"]
-    except KeyError:
+        return json.loads(stdout.decode())["streams"]
+    except Exception as e:
         LOGGER.error(
-            f"No streams found in the ffprobe output: {stdout.decode().strip()}",
+            f"No streams found in the ffprobe output: {stdout.decode().strip()} Error: {e}",
         )
         return None
 

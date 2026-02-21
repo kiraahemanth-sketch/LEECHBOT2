@@ -12,6 +12,7 @@ from ..helper.ext_utils.bot_utils import cmd_exec
 from ..helper.ext_utils.telegraph_helper import telegraph
 from ..helper.telegram_helper.bot_commands import BotCommands
 from ..helper.telegram_helper.message_utils import send_message, edit_message
+from pyrogram.types import LinkPreviewOptions
 
 
 async def gen_mediainfo(message, link=None, media=None, mmsg=None):
@@ -55,7 +56,7 @@ async def gen_mediainfo(message, link=None, media=None, mmsg=None):
     link_id = (await telegraph.create_page(title="MediaInfo X", content=tc))["path"]
     await temp_send.edit(
         f"<b>MediaInfo:</b>\n\n➲ <b>Link :</b> https://graph.org/{link_id}",
-        disable_web_page_preview=False,
+        link_preview_options=LinkPreviewOptions(is_disabled=False),
     )
 
 

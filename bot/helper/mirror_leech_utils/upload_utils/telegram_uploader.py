@@ -22,6 +22,7 @@ from pyrogram.types import (
     InputMediaDocument,
     InputMediaPhoto,
     InputMediaVideo,
+    LinkPreviewOptions,
 )
 from tenacity import (
     RetryError,
@@ -121,7 +122,7 @@ class TelegramUploader:
                 self._log_msg = await TgClient.bot.send_message(
                     chat_id=self._listener.up_dest,
                     text=msg,
-                    disable_web_page_preview=True,
+                    link_preview_options=LinkPreviewOptions(is_disabled=True),
                     message_thread_id=self._listener.chat_thread_id,
                     disable_notification=True,
                 )
@@ -163,7 +164,7 @@ class TelegramUploader:
                 self._sent_msg = await TgClient.user.send_message(
                     chat_id=self._listener.message.chat.id,
                     text="Deleted Cmd Message! Don't delete the cmd message again!",
-                    disable_web_page_preview=True,
+                    link_preview_options=LinkPreviewOptions(is_disabled=True),
                     disable_notification=True,
                 )
         else:

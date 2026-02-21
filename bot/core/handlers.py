@@ -69,6 +69,16 @@ def add_handlers():
     )
     TgClient.bot.add_handler(
         MessageHandler(
+            audio_handler,
+            filters=command(BotCommands.AudioCommand, case_sensitive=True)
+            & CustomFilters.authorized,
+        )
+    )
+    TgClient.bot.add_handler(
+        CallbackQueryHandler(audio_callback, filters=regex("^audio"))
+    )
+    TgClient.bot.add_handler(
+        MessageHandler(
             cancel_all_buttons,
             filters=command(BotCommands.CancelAllCommand, case_sensitive=True)
             & CustomFilters.authorized,

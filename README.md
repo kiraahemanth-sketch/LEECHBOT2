@@ -16,6 +16,7 @@
 
 ## 🌟 Features
 
+- **Smart Track Remover System**: Advanced `/audio` command to selectively remove audio and subtitle tracks from video files.
 - **Smart Auto Extract**: Automatically extracts files ONLY if the filename or link contains `.zip`.
 - **Advanced Auto Merge**: Toggle with `/us2`. Merges multiple video parts (.part1, .part2, .001, etc.) automatically using FFmpeg concat (no re-encode).
 - **Auto Split**: Automatically splits files larger than 4GB into 3.9GB parts for seamless Telegram upload.
@@ -23,6 +24,17 @@
 - **Advanced UI**: Modern buttons, clean inline keyboard, and real-time progress bars for all stages.
 - **Fully Optimized**: Async operations, low RAM usage, and automatic cleanup of temporary files.
 - **Multi-Cloud Support**: Support for GDrive, Rclone, and various DDL hosts.
+
+---
+
+## 🎧 Smart Track Remover (/audio)
+How it works:
+1. Reply to any media file (MKV, MP4, MOV) or direct link with `/audio`.
+2. Bot downloads the file and scans it for all available tracks.
+3. Interactive UI shows all Audio tracks (Language + Codec + Bitrate) and Subtitles.
+4. Toggle tracks with ✅/❌ to keep or remove them.
+5. Press **Encode & Send** to process. Bot uses stream copy where possible for maximum speed.
+6. The processed file is sent directly to your **Bot DM**.
 
 ---
 
@@ -42,6 +54,7 @@
 
 - `/us`: User Settings (Metadata, Leech Settings, etc.)
 - `/us2`: Toggle Auto Merge (Enabled/Disabled)
+- `/audio`: Smart Track Remover UI
 - `/mirror`: Mirror to Cloud
 - `/leech`: Leech to Telegram
 - `/status`: Check active tasks
@@ -58,6 +71,7 @@
    - `API_HASH`
    - `MONGO_DB_URI`
    - `OWNER_ID`
+   - `WEBHOOK_URL` (Optional)
 2. **One-Click Deploy**:
    [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡)
 3. **Worker Dyno**: After deployment, go to the Resources tab and enable the `worker` dyno.
@@ -67,6 +81,19 @@
 1. Use the provided `Dockerfile`.
 2. Set the necessary environment variables in Koyeb Dashboard.
 3. **Note**: Persistent storage is recommended for large downloads.
+
+### 🖤 RENDER DEPLOY
+
+1. Create a Web Service on Render.
+2. Connect your GitHub repository.
+3. Add the required Environment Variables.
+4. Use `python3 -m bot` as the Start Command.
+
+### 💚 RAILWAY DEPLOY
+
+1. Connect your repository to Railway.app.
+2. Add Environment Variables.
+3. Railway will auto-detect the Dockerfile.
 
 ### 🧡 VPS DEPLOY (Ubuntu 22.04)
 

@@ -13,6 +13,7 @@ from .. import LOGGER, intervals, sabnzbd_client, scheduler
 from ..core.config_manager import Config, BinConfig
 from ..core.jdownloader_booter import jdownloader
 from ..core.tg_client import TgClient
+from pyrogram.types import LinkPreviewOptions
 from ..core.torrent_manager import TorrentManager
 from ..helper.ext_utils.bot_utils import new_task
 from ..helper.ext_utils.db_handler import database
@@ -56,14 +57,14 @@ async def send_incomplete_task_message(cid, msg_id, msg):
                 chat_id=cid,
                 message_id=msg_id,
                 text=msg,
-                disable_web_page_preview=True,
+                link_preview_options=LinkPreviewOptions(is_disabled=True),
             )
             await remove(".restartmsg")
         else:
             await TgClient.bot.send_message(
                 chat_id=cid,
                 text=msg,
-                disable_web_page_preview=True,
+                link_preview_options=LinkPreviewOptions(is_disabled=True),
                 disable_notification=True,
             )
     except Exception as e:

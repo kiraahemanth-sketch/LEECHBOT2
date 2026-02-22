@@ -38,7 +38,7 @@ async def start(_, message):
     buttons.url_button(lang.START_BUTTON2, "https://t.me/ALONEKINGSTAR77")
     reply_markup = buttons.build_menu(2)
 
-    if len(message.command) > 1 and message.command[1] == "wzmlx":
+    if len(message.command) > 1 and message.command[1] == "hemanth":
         await delete_message(message)
     elif len(message.command) > 1 and message.command[1] != "start":
         decrypted_url = decode_slink(message.command[1])

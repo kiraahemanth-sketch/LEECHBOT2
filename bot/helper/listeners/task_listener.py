@@ -1,4 +1,5 @@
-from asyncio import gather, sleep, Event
+import asyncio
+from asyncio import gather, sleep, Event, wait_for
 from html import escape
 from time import time
 from mimetypes import guess_type
@@ -693,7 +694,12 @@ class TaskListener(TaskConfig):
 
         # We need to register a callback handler for 'ftool'
 
-        await self._ftool_event.wait()
+        try:
+            await wait_for(self._ftool_event.wait(), timeout=180)
+        except asyncio.TimeoutError:
+            self._ftool_choice = "done"
+            LOGGER.info(f"Force tools timeout for task {self.mid}")
+
         await delete_message(msg)
 
         if self._ftool_choice == "done":

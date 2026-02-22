@@ -1,4 +1,4 @@
-FROM mysterysd/wzmlx:v3
+FROM alonekingstar77/hemanth:v3
 
 WORKDIR /usr/src/app
 

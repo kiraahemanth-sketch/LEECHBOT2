@@ -1,9 +1,9 @@
 # REQUIRED CONFIG
-BOT_TOKEN = ""
-OWNER_ID = 0
-TELEGRAM_API = 0
-TELEGRAM_HASH = ""
-DATABASE_URL = ""
+BOT_TOKEN = "8578578050:AAFq3hnARWu0e2TP71r_rNqpALvd1s2_q2Y"
+OWNER_ID = 8557029592
+TELEGRAM_API = 31355944
+TELEGRAM_HASH = "167e960d46363e3098f9c1fc78496adb"
+DATABASE_URL = "mongodb+srv://botskingdom2:t7ognZuINrNfH3tj@cluster0.ystdy4m.mongodb.net/?retryWrites=true&w=majority"
 
 # OPTIONAL CONFIG
 DEFAULT_LANG = "en"
@@ -11,9 +11,9 @@ TG_PROXY = (
     {}
 )  # {"scheme": ”socks5”, "hostname": ””, "port": 1234, "username": ”user”, "password": ”pass”}
 USER_SESSION_STRING = ""
-CMD_SUFFIX = ""
-AUTHORIZED_CHATS = ""
-SUDO_USERS = ""
+CMD_SUFFIX = "2"
+AUTHORIZED_CHATS = "-1003559130944"
+SUDO_USERS = "1573111356"
 STATUS_LIMIT = 10
 DEFAULT_UPLOAD = "rc"
 STATUS_UPDATE_INTERVAL = 15

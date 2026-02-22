@@ -66,6 +66,19 @@ advanced_options = [
     "UPLOAD_PATHS",
     "USER_COOKIE_FILE",
 ]
+
+ff_tools_options = [
+    "VIDEO_MERGE",
+    "VIDEO_AUDIO_MERGE",
+    "VIDEO_SUBTITLE_MERGE",
+    "STREAM_EXTRACT",
+    "STREAM_SWAP",
+    "STREAM_REMOVE",
+    "WATERMARK",
+    "VIDEO_ENCODE",
+    "WATERMARK_FILE",
+    "KEEP_SOURCE_FILES",
+]
 yt_options = ["YT_DESP", "YT_TAGS", "YT_CATEGORY_ID", "YT_PRIVACY_STATUS"]
 
 user_settings_text = {
@@ -292,6 +305,11 @@ Here I will explain how to use mltb.* which is reference to files you want to wo
         "Auto Merge multiple video parts after extraction.",
         "Toggle Auto Merge on or off.",
     ),
+    "WATERMARK_FILE": (
+        "Photo or Doc",
+        "Custom Watermark is used to overlay an image on your videos.",
+        "<i>Send a transparent PNG photo to save it as custom watermark.</i> \n┖ <b>Time Left :</b> <code>60 sec</code>",
+    ),
 }
 
 
@@ -311,6 +329,7 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("Leech Settings", f"userset {user_id} leech", emoji=5355142851615283756)
         buttons.data_button("Uphoster Settings", f"userset {user_id} uphoster", emoji=5355142851615283756)
         buttons.data_button("FF Media Settings", f"userset {user_id} ffset", emoji=5355142851615283756)
+        buttons.data_button("FF Tools", f"userset {user_id} fftools", emoji=5355142851615283756)
         buttons.data_button(
             "Mics Settings", f"userset {user_id} advanced", position="l_body", emoji=5440389890787281213
         )
@@ -826,6 +845,57 @@ async def get_user_settings(from_user, stype="main"):
 ┠ <b>Video Tracks:</b> {display_video_meta}
 ┖ <b>Subtitles:</b> {display_subtitle_meta}"""
 
+    elif stype == "fftools":
+        buttons.data_button("FFmpeg Cmds", f"userset {user_id} menu FFMPEG_CMDS")
+        buttons.data_button("Mega-MetaData", f"userset {user_id} menu METADATA")
+
+        wpath = f"watermarks/{user_id}.png"
+        wmsg = "Exists" if await aiopath.exists(wpath) else "Not Exists"
+        buttons.data_button(f"Watermark File: {wmsg}", f"userset {user_id} menu WATERMARK_FILE")
+
+        vm = "Enabled" if user_dict.get("VIDEO_MERGE", False) else "Disabled"
+        buttons.data_button(f"Video+Video: {vm}", f"userset {user_id} tog VIDEO_MERGE {'f' if vm == 'Enabled' else 't'}")
+
+        vam = "Enabled" if user_dict.get("VIDEO_AUDIO_MERGE", False) else "Disabled"
+        buttons.data_button(f"Video+Audio: {vam}", f"userset {user_id} tog VIDEO_AUDIO_MERGE {'f' if vam == 'Enabled' else 't'}")
+
+        vsm = "Enabled" if user_dict.get("VIDEO_SUBTITLE_MERGE", False) else "Disabled"
+        buttons.data_button(f"Video+Subtitle: {vsm}", f"userset {user_id} tog VIDEO_SUBTITLE_MERGE {'f' if vsm == 'Enabled' else 't'}")
+
+        se = "Enabled" if user_dict.get("STREAM_EXTRACT", False) else "Disabled"
+        buttons.data_button(f"Stream Extract: {se}", f"userset {user_id} tog STREAM_EXTRACT {'f' if se == 'Enabled' else 't'}")
+
+        ss = "Enabled" if user_dict.get("STREAM_SWAP", False) else "Disabled"
+        buttons.data_button(f"Stream Swap: {ss}", f"userset {user_id} tog STREAM_SWAP {'f' if ss == 'Enabled' else 't'}")
+
+        sr = "Enabled" if user_dict.get("STREAM_REMOVE", False) else "Disabled"
+        buttons.data_button(f"Stream Remove: {sr}", f"userset {user_id} tog STREAM_REMOVE {'f' if sr == 'Enabled' else 't'}")
+
+        wmark = "Enabled" if user_dict.get("WATERMARK", False) else "Disabled"
+        buttons.data_button(f"Watermark: {wmark}", f"userset {user_id} tog WATERMARK {'f' if wmark == 'Enabled' else 't'}")
+
+        venc = "Enabled" if user_dict.get("VIDEO_ENCODE", False) else "Disabled"
+        buttons.data_button(f"Video Encode: {venc}", f"userset {user_id} tog VIDEO_ENCODE {'f' if venc == 'Enabled' else 't'}")
+
+        ksf = "Enabled" if user_dict.get("KEEP_SOURCE_FILES", False) else "Disabled"
+        buttons.data_button(f"Keep Source Files: {ksf}", f"userset {user_id} tog KEEP_SOURCE_FILES {'f' if ksf == 'Enabled' else 't'}", position="l_body")
+
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
+        btns = buttons.build_menu(2)
+
+        text = f"""🛠 <b><u>FF Settings :</u></b>
+┃
+┟ <b>FFmpeg Commands</b> » {'Exists' if user_dict.get('FFMPEG_CMDS') else 'Not Exists'}
+┠ <b>Metadata Settings</b> » {'Exists' if user_dict.get('METADATA') else 'Not Exists'}
+┠ <b>Video Merge</b> » {vm}
+┠ <b>Video+Audio Merge</b> » {vam}
+┠ <b>Video+Subtitle Merge</b> » {vsm}
+┠ <b>Stream Extract</b> » {se}
+┠ <b>Stream Swap</b> » {ss}
+┠ <b>Stream Remove</b> » {sr}
+┖ <b>Keep Source Files</b> » {ksf}"""
+
     elif stype == "advanced":
         buttons.data_button(
             "Excluded Extensions", f"userset {user_id} menu EXCLUDED_EXTENSIONS"
@@ -968,6 +1038,11 @@ async def add_file(_, message, ftype, rfunc):
         cpath = f"{getcwd()}/cookies/{user_id}"
         await makedirs(cpath, exist_ok=True)
         des_dir = f"{cpath}/cookies.txt"
+        await message.download(file_name=des_dir)
+    elif ftype == "WATERMARK_FILE":
+        wpath = f"{getcwd()}/watermarks/"
+        await makedirs(wpath, exist_ok=True)
+        des_dir = f"{wpath}{user_id}.png"
         await message.download(file_name=des_dir)
     await delete_message(message)
     update_user_ldata(user_id, ftype, des_dir)
@@ -1117,10 +1192,11 @@ async def get_menu(option, message, user_id):
         "RCLONE_CONFIG": f"rclone/{user_id}.conf",
         "TOKEN_PICKLE": f"tokens/{user_id}.pickle",
         "USER_COOKIE_FILE": f"cookies/{user_id}/cookies.txt",
+        "WATERMARK_FILE": f"watermarks/{user_id}.png",
     }
 
     buttons = ButtonMaker()
-    if option in ["THUMBNAIL", "RCLONE_CONFIG", "TOKEN_PICKLE", "USER_COOKIE_FILE"]:
+    if option in ["THUMBNAIL", "RCLONE_CONFIG", "TOKEN_PICKLE", "USER_COOKIE_FILE", "WATERMARK_FILE"]:
         key = "file"
     else:
         key = "set"
@@ -1279,6 +1355,7 @@ async def edit_user_settings(client, query):
         "buzzheavier",
         "pixeldrain",
         "ffset",
+        "fftools",
         "advanced",
         "gdrive",
         "rclone",
@@ -1337,6 +1414,8 @@ async def edit_user_settings(client, query):
             back_to = "gdrive"
         elif data[3] in ["USER_TOKENS", "USE_DEFAULT_COOKIE"]:
             back_to = "general"
+        elif data[3] in ff_tools_options:
+            back_to = "fftools"
         else:
             back_to = "leech"
         await update_user_settings(query, stype=back_to)
@@ -1389,6 +1468,7 @@ async def edit_user_settings(client, query):
             "RCLONE_CONFIG",
             "TOKEN_PICKLE",
             "USER_COOKIE_FILE",
+    "WATERMARK_FILE",
         ]:
             if data[3] == "THUMBNAIL":
                 fpath = thumb_path

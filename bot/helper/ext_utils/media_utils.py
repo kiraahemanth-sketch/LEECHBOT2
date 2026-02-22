@@ -642,6 +642,7 @@ class FFMpeg:
             "-threads",
             f"{threads}",
             output,
+            "-y",
         ]
         if self._listener.is_cancelled:
             return False
@@ -669,6 +670,95 @@ class FFMpeg:
             if await aiopath.exists(output):
                 await remove(output)
         return False
+
+    async def stream_extract(self, video_file, stream_index, output_name):
+        self.clear()
+        self._total_time = (await get_media_info(video_file))[0]
+        dir = ospath.dirname(video_file)
+        output = ospath.join(dir, output_name)
+        cmd = [
+            "taskset",
+            "-c",
+            f"{cores}",
+            BinConfig.FFMPEG_NAME,
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-progress",
+            "pipe:1",
+            "-i",
+            video_file,
+            "-map",
+            f"0:{stream_index}",
+            "-c",
+            "copy",
+            "-threads",
+            f"{threads}",
+            output,
+            "-y",
+        ]
+        if self._listener.is_cancelled:
+            return False
+        self._listener.subproc = await create_subprocess_exec(
+            *cmd, stdout=PIPE, stderr=PIPE
+        )
+        await self._ffmpeg_progress()
+        _, stderr = await self._listener.subproc.communicate()
+        code = self._listener.subproc.returncode
+        if code == 0:
+            return output
+        else:
+            if await aiopath.exists(output):
+                await remove(output)
+            return False
+
+    async def stream_swap(self, video_file, output_name, stream_map):
+        # Example stream_map: "0:v,0:a:1,0:a:0" to swap two audio tracks
+        self.clear()
+        self._total_time = (await get_media_info(video_file))[0]
+        dir = ospath.dirname(video_file)
+        output = ospath.join(dir, output_name)
+
+        map_args = []
+        for m in stream_map.split(','):
+            map_args.extend(["-map", m])
+
+        cmd = [
+            "taskset",
+            "-c",
+            f"{cores}",
+            BinConfig.FFMPEG_NAME,
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-progress",
+            "pipe:1",
+            "-i",
+            video_file
+        ]
+        cmd.extend(map_args)
+        cmd.extend([
+            "-c",
+            "copy",
+            "-threads",
+            f"{threads}",
+            output,
+            "-y",
+        ])
+        if self._listener.is_cancelled:
+            return False
+        self._listener.subproc = await create_subprocess_exec(
+            *cmd, stdout=PIPE, stderr=PIPE
+        )
+        await self._ffmpeg_progress()
+        _, stderr = await self._listener.subproc.communicate()
+        code = self._listener.subproc.returncode
+        if code == 0:
+            return output
+        else:
+            if await aiopath.exists(output):
+                await remove(output)
+            return False
 
     async def sample_video(self, video_file, sample_duration, part_duration):
         self.clear()
@@ -914,3 +1004,251 @@ class FFMpeg:
                 f"{stderr}. Something went wrong while merging parts. Path: {parts[0]}"
             )
         return False
+
+    async def audio_video_merge(self, video_file, audio_file, output_name):
+        self.clear()
+        self._total_time = (await get_media_info(video_file))[0]
+        dir = ospath.dirname(video_file)
+        output = ospath.join(dir, output_name)
+        cmd = [
+            "taskset",
+            "-c",
+            f"{cores}",
+            BinConfig.FFMPEG_NAME,
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-progress",
+            "pipe:1",
+            "-i",
+            video_file,
+            "-i",
+            audio_file,
+            "-map",
+            "0:v",
+            "-map",
+            "1:a",
+            "-c",
+            "copy",
+            "-threads",
+            f"{threads}",
+            output,
+            "-y",
+        ]
+        if self._listener.is_cancelled:
+            return False
+        self._listener.subproc = await create_subprocess_exec(
+            *cmd, stdout=PIPE, stderr=PIPE
+        )
+        await self._ffmpeg_progress()
+        _, stderr = await self._listener.subproc.communicate()
+        code = self._listener.subproc.returncode
+        if code == 0:
+            return output
+        else:
+            if await aiopath.exists(output):
+                await remove(output)
+            return False
+
+    async def watermark(self, video_file, watermark_path, output_name, position='bottom_right'):
+        self.clear()
+        self._total_time = (await get_media_info(video_file))[0]
+        dir = ospath.dirname(video_file)
+        output = ospath.join(dir, output_name)
+
+        pos_map = {
+            'top_left': '10:10',
+            'top_right': 'main_w-overlay_w-10:10',
+            'bottom_left': '10:main_h-overlay_h-10',
+            'bottom_right': 'main_w-overlay_w-10:main_h-overlay_h-10',
+            'center': '(main_w-overlay_w)/2:(main_h-overlay_h)/2'
+        }
+        pos = pos_map.get(position, pos_map['bottom_right'])
+
+        cmd = [
+            "taskset",
+            "-c",
+            f"{cores}",
+            BinConfig.FFMPEG_NAME,
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-progress",
+            "pipe:1",
+            "-i",
+            video_file,
+            "-i",
+            watermark_path,
+            "-filter_complex",
+            f"overlay={pos}",
+            "-c:a",
+            "copy",
+            "-threads",
+            f"{threads}",
+            output,
+            "-y",
+        ]
+        if self._listener.is_cancelled:
+            return False
+        self._listener.subproc = await create_subprocess_exec(
+            *cmd, stdout=PIPE, stderr=PIPE
+        )
+        await self._ffmpeg_progress()
+        _, stderr = await self._listener.subproc.communicate()
+        code = self._listener.subproc.returncode
+        if code == 0:
+            return output
+        else:
+            if await aiopath.exists(output):
+                await remove(output)
+            return False
+
+    async def encode(self, video_file, output_name, crf='23', preset='ultrafast'):
+        self.clear()
+        self._total_time = (await get_media_info(video_file))[0]
+        dir = ospath.dirname(video_file)
+        output = ospath.join(dir, output_name)
+        cmd = [
+            "taskset",
+            "-c",
+            f"{cores}",
+            BinConfig.FFMPEG_NAME,
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-progress",
+            "pipe:1",
+            "-i",
+            video_file,
+            "-c:v",
+            "libx264",
+            "-crf",
+            crf,
+            "-preset",
+            preset,
+            "-c:a",
+            "copy",
+            "-threads",
+            f"{threads}",
+            output,
+            "-y",
+        ]
+        if self._listener.is_cancelled:
+            return False
+        self._listener.subproc = await create_subprocess_exec(
+            *cmd, stdout=PIPE, stderr=PIPE
+        )
+        await self._ffmpeg_progress()
+        _, stderr = await self._listener.subproc.communicate()
+        code = self._listener.subproc.returncode
+        if code == 0:
+            return output
+        else:
+            if await aiopath.exists(output):
+                await remove(output)
+            return False
+
+    async def generate_screenshot_grid(self, video_file, output_name, layout='3x3'):
+        self.clear()
+        duration = (await get_media_info(video_file))[0]
+        if duration == 0:
+            return False
+
+        dir = ospath.dirname(video_file)
+        output = ospath.join(dir, output_name)
+
+        # Calculate number of screenshots
+        w, h = map(int, layout.split('x'))
+        n = w * h
+
+        # We can use ffmpeg's tile filter
+        # First generate screenshots then tile them, or use a complex filter
+        interval = duration / (n + 1)
+
+        filter = f"select='not(mod(n,{int(interval)}))',scale=320:-1,tile={layout}"
+        # This is a bit complex for a single command without knowing frame rate.
+        # Alternative: use take_ss then tile them.
+
+        ss_dir = await take_ss(video_file, n)
+        if not ss_dir:
+            return False
+
+        # Use ffmpeg to tile images in ss_dir
+        cmd = [
+            BinConfig.FFMPEG_NAME,
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-pattern_type",
+            "glob",
+            "-i",
+            f"{escape(ss_dir)}/*.png",
+            "-filter_complex",
+            f"scale=320:-1,tile={layout}",
+            "-threads",
+            f"{threads}",
+            output,
+            "-y"
+        ]
+
+        process = await create_subprocess_exec(*cmd)
+        await process.wait()
+
+        await rmtree(ss_dir, ignore_errors=True)
+
+        if await aiopath.exists(output):
+            return output
+        return False
+
+    async def convert_to_pdf(self, image_path, pdf_path):
+        def _convert():
+            from PIL import Image
+            image = Image.open(image_path)
+            image.convert('RGB').save(pdf_path, "PDF", resolution=100.0)
+            return pdf_path
+        return await sync_to_async(_convert)
+
+    async def video_subtitle_merge(self, video_file, subtitle_file, output_name):
+        self.clear()
+        self._total_time = (await get_media_info(video_file))[0]
+        dir = ospath.dirname(video_file)
+        output = ospath.join(dir, output_name)
+        cmd = [
+            "taskset",
+            "-c",
+            f"{cores}",
+            BinConfig.FFMPEG_NAME,
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-progress",
+            "pipe:1",
+            "-i",
+            video_file,
+            "-i",
+            subtitle_file,
+            "-map",
+            "0",
+            "-map",
+            "1",
+            "-c",
+            "copy",
+            "-threads",
+            f"{threads}",
+            output,
+            "-y",
+        ]
+        if self._listener.is_cancelled:
+            return False
+        self._listener.subproc = await create_subprocess_exec(
+            *cmd, stdout=PIPE, stderr=PIPE
+        )
+        await self._ffmpeg_progress()
+        _, stderr = await self._listener.subproc.communicate()
+        code = self._listener.subproc.returncode
+        if code == 0:
+            return output
+        else:
+            if await aiopath.exists(output):
+                await remove(output)
+            return False

@@ -1,4 +1,4 @@
-from asyncio import gather, sleep
+from asyncio import gather, sleep, Event
 from html import escape
 from time import time
 from mimetypes import guess_type
@@ -234,6 +234,32 @@ class TaskListener(TaskConfig):
         up_path = await self.proceed_merge(up_path, gid)
         if self.is_cancelled:
             return
+
+        up_path = await self.proceed_video_merge(up_path, gid)
+        if self.is_cancelled:
+            return
+
+        up_path = await self.proceed_audio_video_merge(up_path, gid)
+        if self.is_cancelled:
+            return
+
+        up_path = await self.proceed_video_subtitle_merge(up_path, gid)
+        if self.is_cancelled:
+            return
+
+        up_path = await self.proceed_watermark(up_path, gid)
+        if self.is_cancelled:
+            return
+
+        up_path = await self.proceed_encoding(up_path, gid)
+        if self.is_cancelled:
+            return
+
+        if self.force_tools:
+            up_path = await self.proceed_force_tools(up_path, gid)
+            if self.is_cancelled:
+                return
+
         self.is_file = await aiopath.isfile(up_path)
         self.name = up_path.replace(f"{up_dir}/", "").split("/", 1)[0]
         self.size = await get_path_size(up_dir)
@@ -642,6 +668,54 @@ class TaskListener(TaskConfig):
             await clean_download(self.up_dir)
         if self.thumb and await aiopath.exists(self.thumb):
             await remove(self.thumb)
+
+    async def proceed_force_tools(self, dl_path, gid):
+        if self.is_file:
+            is_v, _, _ = await get_document_type(dl_path)
+            if not is_v:
+                return dl_path
+
+        buttons = ButtonMaker()
+        buttons.data_button("Screenshot Grid", f"ftool {self.mid} ssgrid")
+        buttons.data_button("Watermark", f"ftool {self.mid} watermark")
+        buttons.data_button("Encode", f"ftool {self.mid} encode")
+        buttons.data_button("Stream Tools", f"ftool {self.mid} streams")
+        buttons.data_button("Done", f"ftool {self.mid} done")
+
+        msg = await send_message(self.message, "Select the tool you want to apply:", buttons.build_menu(2))
+
+        # Wait for user interaction
+        # This is tricky because we are in an async workflow.
+        # Usually we use an Event to wait.
+
+        self._ftool_event = Event()
+        self._ftool_choice = None
+
+        # We need to register a callback handler for 'ftool'
+
+        await self._ftool_event.wait()
+        await delete_message(msg)
+
+        if self._ftool_choice == "done":
+            return dl_path
+
+        ffmpeg = FFMpeg(self)
+        if self._ftool_choice == "ssgrid":
+            res = await ffmpeg.generate_screenshot_grid(dl_path, f"{self.name}_grid.png")
+            if res:
+                await ffmpeg.convert_to_pdf(res, f"{self.name}_grid.pdf")
+        elif self._ftool_choice == "watermark":
+            # Just a placeholder for now as it needs a watermark path
+            pass
+        elif self._ftool_choice == "encode":
+            res = await ffmpeg.encode(dl_path, f"ENC_{self.name}")
+            if res:
+                dl_path = res
+        elif self._ftool_choice == "streams":
+            # This could call the /audio logic
+            pass
+
+        return await self.proceed_force_tools(dl_path, gid)
 
     async def on_upload_error(self, error):
         async with task_dict_lock:

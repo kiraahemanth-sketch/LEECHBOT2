@@ -1,25 +1,19 @@
 #!/bin/bash
 
-echo "⚡ Starting ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ One-Click Deployment ⚡"
+# Update and install system dependencies
+sudo apt update && sudo apt upgrade -y
+sudo apt install python3 python3-pip ffmpeg git libmagic-dev screen -y
 
-if [ -d "/data/data/com.termux/files/home" ]; then
-    echo "📱 Detecting Termux environment..."
-    pkg update && pkg upgrade -y
-    pkg install python ffmpeg git libmagic -y
-else
-    echo "🖥 Detecting VPS/Linux environment..."
-    sudo apt update && sudo apt upgrade -y
-    sudo apt install python3 python3-pip ffmpeg git libmagic-dev -y
-fi
+# Install uv
+pip3 install uv || pip install uv
 
-echo "📂 Cloning repository..."
-git clone https://github.com/kiraahemanth-sketch/LEECHBOT2 mirrorbot
-cd mirrorbot
+# Install requirements
+uv pip install --system -r requirements.txt || pip3 install -r requirements.txt
 
-echo "📦 Installing high-performance requirements using uv..."
-pip3 install uv
-uv pip install --system --upgrade pip
-uv pip install --system -r requirements.txt
-
-echo "🚀 Starting the Bot..."
-bash start.sh
+# Start command
+echo "--------------------------------------------------"
+echo "👑 ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡👑 VPS Deployment Successful!"
+echo "Owner: @alonekingstar77"
+echo "To start the bot, run: python3 -m bot"
+echo "To run in background: screen -dmS wzml python3 -m bot"
+echo "--------------------------------------------------"

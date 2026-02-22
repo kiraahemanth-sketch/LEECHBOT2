@@ -4,11 +4,12 @@ from re import match as re_match
 from aiofiles.os import path as aiopath
 from bot.core.config_manager import Config
 
-from .. import DOWNLOAD_DIR, LOGGER, bot_loop, task_dict_lock
+from .. import DOWNLOAD_DIR, LOGGER, bot_loop, task_dict, task_dict_lock
 from ..helper.ext_utils.bot_utils import (
     COMMAND_USAGE,
     arg_parser,
     get_content_type,
+    new_task,
     sync_to_async,
 )
 from ..helper.ext_utils.exceptions import DirectDownloadLinkException
@@ -114,6 +115,7 @@ class Mirror(TaskListener):
             "-bt": False,
             "-ut": False,
             "-yt": False,
+            "-ft": False,
             "-i": 0,
             "-sp": 0,
             "link": "",
@@ -184,6 +186,7 @@ class Mirror(TaskListener):
         self.bot_trans = args["-bt"]
         self.user_trans = args["-ut"]
         self.is_yt = args["-yt"]
+        self.force_tools = args["-ft"]
         self.metadata_dict = self.default_metadata_dict.copy()
         self.audio_metadata_dict = self.audio_metadata_dict.copy()
         self.video_metadata_dict = self.video_metadata_dict.copy()
@@ -478,3 +481,26 @@ async def nzb_leech(client, message):
     bot_loop.create_task(
         Mirror(client, message, is_leech=True, is_nzb=True).new_event()
     )
+
+@new_task
+async def ftool_callback(client, query):
+    data = query.data.split()
+    mid = int(data[1])
+    action = data[2]
+
+    async with task_dict_lock:
+        if mid not in task_dict:
+            await query.answer("Task expired or not found!", show_alert=True)
+            return
+        task = task_dict[mid]
+
+    listener = task.listener
+    if query.from_user.id != listener.user_id:
+        await query.answer("Not your task!", show_alert=True)
+        return
+
+    listener._ftool_choice = action
+    listener._ftool_event.set()
+    await query.answer()
+
+# Registration in handlers.py

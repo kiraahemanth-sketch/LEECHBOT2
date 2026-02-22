@@ -21,6 +21,10 @@
 - **Advanced Auto Merge**: Toggle with `/merge`. Merges multiple video parts (.part1, .part2, .001, etc.) automatically using FFmpeg concat (no re-encode).
 - **Auto Split**: Automatically splits files larger than 4GB into 3.9GB parts for seamless Telegram upload.
 - **Global Metadata**: Apply custom metadata to your files after merging.
+- **Advanced FFmpeg Tools**: Support for Video Merging, Audio/Subtitle Merging, Watermarking, and Encoding directly via the bot.
+- **Interactive Force Tools**: Toggle interactive tools with `-ft` flag to apply processing on the fly.
+- **Screenshot Grid**: Generate tiled screenshot grids with optional PDF export.
+- **Advanced Stream Management**: Extract, swap, or remove audio and subtitle tracks with ease.
 - **Advanced UI**: Premium colorful buttons, attractive inline keyboard, and round-circle progress bars for all stages.
 - **Fully Optimized**: Async operations, low RAM usage, and automatic cleanup of temporary files.
 - **Ultra High Speed**: Optimized FFmpeg presets (ultrafast), maximum concurrency, and uvloop integration for light-speed performance.

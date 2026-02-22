@@ -113,6 +113,16 @@ class TaskConfig:
         self.user_transmission = False
         self.hybrid_leech = False
         self.auto_merge = False
+        self.video_merge = False
+        self.video_audio_merge = False
+        self.video_subtitle_merge = False
+        self.stream_extract = False
+        self.stream_swap = False
+        self.stream_remove = False
+        self.watermark = False
+        self.video_encode = False
+        self.keep_source_files = False
+        self.force_tools = False
         self.extract = False
         self.compress = False
         self.select = False
@@ -537,6 +547,15 @@ class TaskConfig:
             )
 
             self.auto_merge = self.user_dict.get("AUTO_MERGE", False)
+            self.video_merge = self.user_dict.get("VIDEO_MERGE", False)
+            self.video_audio_merge = self.user_dict.get("VIDEO_AUDIO_MERGE", False)
+            self.video_subtitle_merge = self.user_dict.get("VIDEO_SUBTITLE_MERGE", False)
+            self.stream_extract = self.user_dict.get("STREAM_EXTRACT", False)
+            self.stream_swap = self.user_dict.get("STREAM_SWAP", False)
+            self.stream_remove = self.user_dict.get("STREAM_REMOVE", False)
+            self.watermark = self.user_dict.get("WATERMARK", False)
+            self.video_encode = self.user_dict.get("VIDEO_ENCODE", False)
+            self.keep_source_files = self.user_dict.get("KEEP_SOURCE_FILES", False)
 
             if self.thumb != "none" and is_telegram_link(self.thumb):
                 msg = (await get_tg_link_message(self.thumb))[0]
@@ -1224,8 +1243,149 @@ class TaskConfig:
         LOGGER.info(f"Merging parts for: {list(base_names)[0]}")
         res = await ffmpeg.merge(parts, list(base_names)[0] + list(extensions)[0])
         if res:
-            for f in parts:
+            if not self.keep_source_files:
+                for f in parts:
+                    with suppress(Exception):
+                        await remove(f)
+            return res
+        return dl_path
+
+    async def proceed_video_merge(self, dl_path, gid):
+        if not self.video_merge or self.is_file:
+            return dl_path
+
+        video_files = []
+        for dirpath, _, files in await sync_to_async(walk, dl_path):
+            for file in files:
+                if (await get_document_type(ospath.join(dirpath, file)))[0]:
+                    video_files.append(ospath.join(dirpath, file))
+
+        if len(video_files) <= 1:
+            return dl_path
+
+        video_files.sort()
+        ffmpeg = FFMpeg(self)
+        async with task_dict_lock:
+            task_dict[self.mid] = FFmpegStatus(self, ffmpeg, gid, "Merge")
+
+        output_name = f"{self.name or 'merged'}.mkv"
+        res = await ffmpeg.merge(video_files, output_name)
+        if res:
+            if not self.keep_source_files:
+                for f in video_files:
+                    with suppress(Exception):
+                        await remove(f)
+            return res
+        return dl_path
+
+    async def proceed_audio_video_merge(self, dl_path, gid):
+        if not self.video_audio_merge or self.is_file:
+            return dl_path
+
+        video_file = None
+        audio_file = None
+        for dirpath, _, files in await sync_to_async(walk, dl_path):
+            for file in files:
+                f_path = ospath.join(dirpath, file)
+                is_v, is_a, _ = await get_document_type(f_path)
+                if is_v and not video_file:
+                    video_file = f_path
+                elif is_a and not audio_file:
+                    audio_file = f_path
+
+        if not (video_file and audio_file):
+            return dl_path
+
+        ffmpeg = FFMpeg(self)
+        async with task_dict_lock:
+            task_dict[self.mid] = FFmpegStatus(self, ffmpeg, gid, "Merge")
+
+        output_name = f"AV_{ospath.basename(video_file)}"
+        res = await ffmpeg.audio_video_merge(video_file, audio_file, output_name)
+        if res:
+            if not self.keep_source_files:
                 with suppress(Exception):
-                    await remove(f)
+                    await remove(video_file)
+                    await remove(audio_file)
+            return res
+        return dl_path
+
+    async def proceed_video_subtitle_merge(self, dl_path, gid):
+        if not self.video_subtitle_merge or self.is_file:
+            return dl_path
+
+        video_file = None
+        subtitle_file = None
+        for dirpath, _, files in await sync_to_async(walk, dl_path):
+            for file in files:
+                f_path = ospath.join(dirpath, file)
+                if (await get_document_type(f_path))[0] and not video_file:
+                    video_file = f_path
+                elif file.endswith(('.srt', '.ass', '.vtt')) and not subtitle_file:
+                    subtitle_file = f_path
+
+        if not (video_file and subtitle_file):
+            return dl_path
+
+        ffmpeg = FFMpeg(self)
+        async with task_dict_lock:
+            task_dict[self.mid] = FFmpegStatus(self, ffmpeg, gid, "Merge")
+
+        output_name = f"S_{ospath.basename(video_file)}"
+        res = await ffmpeg.video_subtitle_merge(video_file, subtitle_file, output_name)
+        if res:
+            if not self.keep_source_files:
+                with suppress(Exception):
+                    await remove(video_file)
+                    await remove(subtitle_file)
+            return res
+        return dl_path
+
+    async def proceed_stream_processing(self, dl_path, gid):
+        if not (self.stream_extract or self.stream_swap or self.stream_remove) or self.is_file:
+            return dl_path
+
+        # For now, we'll use the /audio interactive tool logic if force_tools is enabled
+        # or just implement a default behavior.
+        # Given the complexity, usually these are interactive.
+        # If the user enabled it in settings, we might want to prompt them.
+
+        return dl_path
+
+    async def proceed_watermark(self, dl_path, gid):
+        if not self.watermark or self.is_file:
+            return dl_path
+
+        wpath = f"watermarks/{self.user_id}.png"
+        if not await aiopath.exists(wpath):
+            return dl_path
+
+        ffmpeg = FFMpeg(self)
+        async with task_dict_lock:
+            task_dict[self.mid] = FFmpegStatus(self, ffmpeg, gid, "Watermark")
+
+        output_name = f"WM_{self.name}"
+        res = await ffmpeg.watermark(dl_path, wpath, output_name)
+        if res:
+            if not self.keep_source_files:
+                with suppress(Exception):
+                    await remove(dl_path)
+            return res
+        return dl_path
+
+    async def proceed_encoding(self, dl_path, gid):
+        if not self.video_encode or self.is_file:
+            return dl_path
+
+        ffmpeg = FFMpeg(self)
+        async with task_dict_lock:
+            task_dict[self.mid] = FFmpegStatus(self, ffmpeg, gid, "Encode")
+
+        output_name = f"ENC_{self.name}"
+        res = await ffmpeg.encode(dl_path, output_name)
+        if res:
+            if not self.keep_source_files:
+                with suppress(Exception):
+                    await remove(dl_path)
             return res
         return dl_path

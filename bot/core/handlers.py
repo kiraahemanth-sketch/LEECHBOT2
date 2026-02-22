@@ -78,6 +78,9 @@ def add_handlers():
         CallbackQueryHandler(audio_callback, filters=regex("^audio"))
     )
     TgClient.bot.add_handler(
+        CallbackQueryHandler(ftool_callback, filters=regex("^ftool"))
+    )
+    TgClient.bot.add_handler(
         MessageHandler(
             cancel_all_buttons,
             filters=command(BotCommands.CancelAllCommand, case_sensitive=True)

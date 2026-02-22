@@ -311,11 +311,11 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
     msg += "📊 <b><u>Bot Statistics</u></b>\n"
     buttons = ButtonMaker()
     if not is_user:
-        buttons.data_button("📜 Overview", f"status {sid} ov", position="header")
+        buttons.data_button("📊 Overview", f"status {sid} ov", position="header", emoji=5440389890787281213)
     if len(tasks) > STATUS_LIMIT:
         msg += f"📖 <b>Page:</b> <code>{page_no}/{pages}</code> | <b>Tasks:</b> <code>{tasks_no}</code>\n"
-        buttons.data_button("⏪", f"status {sid} pre", position="header")
-        buttons.data_button("⏩", f"status {sid} nex", position="header")
+        buttons.data_button("⏪", f"status {sid} pre", position="header", emoji=5355142851615283756)
+        buttons.data_button("⏩", f"status {sid} nex", position="header", emoji=5355142851615283756)
         if tasks_no > 30:
             for i in [1, 2, 4, 6, 8, 10, 15]:
                 buttons.data_button(i, f"status {sid} ps {i}", position="footer")
@@ -323,7 +323,7 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         for label, status_value in list(STATUSES.items()):
             if status_value != status:
                 buttons.data_button(label, f"status {sid} st {status_value}")
-    buttons.data_button("♻️ Refresh", f"status {sid} ref", position="header")
+    buttons.data_button("♻️ Refresh", f"status {sid} ref", position="header", emoji=5440389890787281213)
     button = buttons.build_menu(8)
     msg += f"🖥 <b>CPU:</b> <code>{cpu_percent()}%</code> | 💿 <b>Free:</b> <code>{get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}</code>\n"
     msg += f"⚙️ <b>RAM:</b> <code>{virtual_memory().percent}%</code> | 🕒 <b>Uptime:</b> <code>{get_readable_time(time() - bot_start_time)}</code>"

@@ -21,7 +21,7 @@
 - **Advanced Auto Merge**: Toggle with `/merge`. Merges multiple video parts (.part1, .part2, .001, etc.) automatically using FFmpeg concat (no re-encode).
 - **Auto Split**: Automatically splits files larger than 4GB into 3.9GB parts for seamless Telegram upload.
 - **Global Metadata**: Apply custom metadata to your files after merging.
-- **Advanced UI**: Modern buttons, clean inline keyboard, and real-time progress bars for all stages.
+- **Advanced UI**: Premium colorful buttons, attractive inline keyboard, and round-circle progress bars for all stages.
 - **Fully Optimized**: Async operations, low RAM usage, and automatic cleanup of temporary files.
 - **Ultra High Speed**: Optimized FFmpeg presets (ultrafast), maximum concurrency, and uvloop integration for light-speed performance.
 - **Multi-Cloud Support**: Support for GDrive, Rclone, and various DDL hosts.

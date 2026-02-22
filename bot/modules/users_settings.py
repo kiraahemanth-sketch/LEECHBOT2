@@ -305,14 +305,14 @@ async def get_user_settings(from_user, stype="main"):
 
     if stype == "main":
         buttons.data_button(
-            "General Settings", f"userset {user_id} general", position="header"
+            "General Settings", f"userset {user_id} general", position="header", emoji=5440389890787281213
         )
-        buttons.data_button("Mirror Settings", f"userset {user_id} mirror")
-        buttons.data_button("Leech Settings", f"userset {user_id} leech")
-        buttons.data_button("Uphoster Settings", f"userset {user_id} uphoster")
-        buttons.data_button("FF Media Settings", f"userset {user_id} ffset")
+        buttons.data_button("Mirror Settings", f"userset {user_id} mirror", emoji=5355142851615283756)
+        buttons.data_button("Leech Settings", f"userset {user_id} leech", emoji=5355142851615283756)
+        buttons.data_button("Uphoster Settings", f"userset {user_id} uphoster", emoji=5355142851615283756)
+        buttons.data_button("FF Media Settings", f"userset {user_id} ffset", emoji=5355142851615283756)
         buttons.data_button(
-            "Mics Settings", f"userset {user_id} advanced", position="l_body"
+            "Mics Settings", f"userset {user_id} advanced", position="l_body", emoji=5440389890787281213
         )
 
         if user_dict and any(

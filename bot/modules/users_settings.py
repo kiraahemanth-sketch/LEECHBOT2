@@ -849,52 +849,43 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("FFmpeg Cmds", f"userset {user_id} menu FFMPEG_CMDS")
         buttons.data_button("Mega-MetaData", f"userset {user_id} menu METADATA")
 
-        wpath = f"watermarks/{user_id}.png"
-        wmsg = "Exists" if await aiopath.exists(wpath) else "Not Exists"
-        buttons.data_button(f"Watermark File: {wmsg}", f"userset {user_id} menu WATERMARK_FILE")
-
         vm = "Enabled" if user_dict.get("VIDEO_MERGE", False) else "Disabled"
-        buttons.data_button(f"Video+Video: {vm}", f"userset {user_id} tog VIDEO_MERGE {'f' if vm == 'Enabled' else 't'}")
+        buttons.data_button(f"Video+Video", f"userset {user_id} tog VIDEO_MERGE {'f' if vm == 'Enabled' else 't'}")
 
         vam = "Enabled" if user_dict.get("VIDEO_AUDIO_MERGE", False) else "Disabled"
-        buttons.data_button(f"Video+Audio: {vam}", f"userset {user_id} tog VIDEO_AUDIO_MERGE {'f' if vam == 'Enabled' else 't'}")
+        buttons.data_button(f"Video+Audio", f"userset {user_id} tog VIDEO_AUDIO_MERGE {'f' if vam == 'Enabled' else 't'}")
 
         vsm = "Enabled" if user_dict.get("VIDEO_SUBTITLE_MERGE", False) else "Disabled"
-        buttons.data_button(f"Video+Subtitle: {vsm}", f"userset {user_id} tog VIDEO_SUBTITLE_MERGE {'f' if vsm == 'Enabled' else 't'}")
+        buttons.data_button(f"Video+Subtitle", f"userset {user_id} tog VIDEO_SUBTITLE_MERGE {'f' if vsm == 'Enabled' else 't'}")
 
         se = "Enabled" if user_dict.get("STREAM_EXTRACT", False) else "Disabled"
-        buttons.data_button(f"Stream Extract: {se}", f"userset {user_id} tog STREAM_EXTRACT {'f' if se == 'Enabled' else 't'}")
+        buttons.data_button(f"Stream Extract", f"userset {user_id} tog STREAM_EXTRACT {'f' if se == 'Enabled' else 't'}")
 
         ss = "Enabled" if user_dict.get("STREAM_SWAP", False) else "Disabled"
-        buttons.data_button(f"Stream Swap: {ss}", f"userset {user_id} tog STREAM_SWAP {'f' if ss == 'Enabled' else 't'}")
+        buttons.data_button(f"Stream Swap", f"userset {user_id} tog STREAM_SWAP {'f' if ss == 'Enabled' else 't'}")
 
         sr = "Enabled" if user_dict.get("STREAM_REMOVE", False) else "Disabled"
-        buttons.data_button(f"Stream Remove: {sr}", f"userset {user_id} tog STREAM_REMOVE {'f' if sr == 'Enabled' else 't'}")
-
-        wmark = "Enabled" if user_dict.get("WATERMARK", False) else "Disabled"
-        buttons.data_button(f"Watermark: {wmark}", f"userset {user_id} tog WATERMARK {'f' if wmark == 'Enabled' else 't'}")
-
-        venc = "Enabled" if user_dict.get("VIDEO_ENCODE", False) else "Disabled"
-        buttons.data_button(f"Video Encode: {venc}", f"userset {user_id} tog VIDEO_ENCODE {'f' if venc == 'Enabled' else 't'}")
+        buttons.data_button(f"Stream Remove", f"userset {user_id} tog STREAM_REMOVE {'f' if sr == 'Enabled' else 't'}")
 
         ksf = "Enabled" if user_dict.get("KEEP_SOURCE_FILES", False) else "Disabled"
-        buttons.data_button(f"Keep Source Files: {ksf}", f"userset {user_id} tog KEEP_SOURCE_FILES {'f' if ksf == 'Enabled' else 't'}", position="l_body")
+        buttons.data_button(f"Keep Source Files", f"userset {user_id} tog KEEP_SOURCE_FILES {'f' if ksf == 'Enabled' else 't'}", position="l_body")
 
-        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
-        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
+        buttons.data_button("Back", f"userset {user_id} back", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer")
         btns = buttons.build_menu(2)
 
-        text = f"""🛠 <b><u>FF Settings :</u></b>
-┃
-┟ <b>FFmpeg Commands</b> » {'Exists' if user_dict.get('FFMPEG_CMDS') else 'Not Exists'}
-┠ <b>Metadata Settings</b> » {'Exists' if user_dict.get('METADATA') else 'Not Exists'}
-┠ <b>Video Merge</b> » {vm}
-┠ <b>Video+Audio Merge</b> » {vam}
-┠ <b>Video+Subtitle Merge</b> » {vsm}
-┠ <b>Stream Extract</b> » {se}
-┠ <b>Stream Swap</b> » {ss}
-┠ <b>Stream Remove</b> » {sr}
-┖ <b>Keep Source Files</b> » {ksf}"""
+        text = f"""🌀 <b>FF Settings :</b>
+┌<b>Name</b> » {from_user.first_name}
+│
+├ <b>FFmpeg Commands</b> » {'Exists' if user_dict.get('FFMPEG_CMDS') else 'Not Exists'}
+├ <b>Metadata Settings</b> » {'Exists' if user_dict.get('METADATA') else 'Not Exists'}
+├ <b>Video Merge</b> » {vm}
+├ <b>Video+Audio Merge</b> » {vam}
+├ <b>Video+Subtitle Merge</b> » {vsm}
+├ <b>Stream Extract</b> » {se}
+├ <b>Stream Swap</b> » {ss}
+├ <b>Stream Remove</b> » {sr}
+└ <b>Keep Source Files</b> » {ksf}"""
 
     elif stype == "advanced":
         buttons.data_button(

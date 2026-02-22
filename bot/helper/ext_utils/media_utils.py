@@ -562,6 +562,8 @@ class FFMpeg:
                 "aac",
                 "-threads",
                 f"{threads}",
+                "-movflags",
+                "+faststart",
                 output,
             ]
             if ext == "mp4":
@@ -589,6 +591,8 @@ class FFMpeg:
                 "copy",
                 "-threads",
                 f"{threads}",
+                "-movflags",
+                "+faststart",
                 output,
             ]
         if self._listener.is_cancelled:
@@ -694,6 +698,8 @@ class FFMpeg:
             "copy",
             "-threads",
             f"{threads}",
+            "-movflags",
+            "+faststart",
             output,
             "-y",
         ]

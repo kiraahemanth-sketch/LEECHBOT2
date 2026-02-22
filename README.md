@@ -147,3 +147,26 @@ How it works:
 
 - **Channel**: [⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Updates](https://t.me/ALONEKINGSTAR77)
 - **Support**: [@alonekingstar77](https://t.me/ALONEKINGSTAR77)
+
+---
+
+## 📖 Text-tutorial
+
+● **For Merge Operations**:
+  1. First turn on the any merge option which one you wants to use from `/us`.
+  2. If you want to use it on direct links like torrent:
+     `/l yourlink -m newfilename -ft`
+  3. If your link contains a Zip file:
+     `/l yourlink -e -m newfilename -ft`
+  4. If you want to Merge Telegram (TG) files, reply with the below command to the first file:
+     `/l -m newfilename -i N -ft`
+     (For zips: `/l -e -m newfilename -i N -ft`)
+     *[ Where **N** is the number of files you want to merge ]*
+
+● **For Stream Operations, Watermarking and Video Encode**:
+  - Direct Link: `/l yourlink -n newfilename.mkv -ft`
+  - Reply to TG file: `/l -n newfilename.mkv -ft`
+
+**Note**:
+- ⚠️ **Don't add Extension** (like .mkv / .mp4 etc) in the filename for Merge operations.
+- 💡 You can also add/change names via the Rename feature.

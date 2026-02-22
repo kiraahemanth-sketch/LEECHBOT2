@@ -697,10 +697,10 @@ class TaskConfig:
 
     async def proceed_extract(self, dl_path, gid):
         if not (
-            ".zip" in self.name.lower()
-            or (self.link and isinstance(self.link, str) and ".zip" in self.link.lower())
+            any(ext in self.name.lower() for ext in [".zip", ".rar", ".7z"])
+            or (self.link and isinstance(self.link, str) and any(ext in self.link.lower() for ext in [".zip", ".rar", ".7z"]))
         ):
-            LOGGER.info(f"Skipping extraction for {self.name} as it is not a .zip file.")
+            LOGGER.info(f"Skipping extraction for {self.name} as it does not contain .zip, .rar, or .7z in name/link.")
             return dl_path
         pswd = self.extract if isinstance(self.extract, str) else ""
         self.files_to_proceed = []

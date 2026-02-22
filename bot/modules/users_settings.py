@@ -334,13 +334,13 @@ async def get_user_settings(from_user, stype="main"):
             )
         buttons.data_button("Close", f"userset {user_id} close", position="footer")
 
-        text = f"""⌬ <b>User Settings :</b>
-│
-┟ <b>Name</b> → {user_name}
-┠ <b>UserID</b> → #ID{user_id}
-┠ <b>Username</b> → @{from_user.username}
-┠ <b>Telegram DC</b> → {from_user.dc_id}
-┖ <b>Telegram Lang</b> → {Language.get(lc).display_name() if (lc := from_user.language_code) else "N/A"}"""
+        text = f"""👤 <b><u>Account Overview</u></b>
+┃
+┟ <b>Name:</b> {user_name}
+┠ <b>User ID:</b> <code>{user_id}</code>
+┠ <b>Username:</b> @{from_user.username}
+┠ <b>Data Center:</b> <code>{from_user.dc_id}</code>
+┖ <b>Language:</b> <code>{Language.get(lc).display_name() if (lc := from_user.language_code) else "N/A"}</code>"""
 
         btns = buttons.build_menu(2)
 
@@ -522,22 +522,21 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("Close", f"userset {user_id} close", "footer")
         btns = buttons.build_menu(2)
 
-        text = f"""⌬ <b>Leech Settings :</b>
-┟ <b>Name</b> → {user_name}
+        text = f"""📤 <b><u>Leech Configuration</u></b>
 ┃
-┠ Leech Type → <b>{ltype}</b>
-┠ Custom Thumbnail → <b>{thumbmsg}</b>
-┠ Leech Split Size → <b>{get_readable_file_size(split_size)}</b>
-┠ Equal Splits → <b>{equal_splits}</b>
-┠ Media Group → <b>{media_group}</b>
-┠ Leech Prefix → <code>{escape(lprefix)}</code>
-┠ Leech Suffix → <code>{escape(lsuffix)}</code>
-┠ Leech Caption → <code>{escape(lcap)}</code>
-┠ Leech Destination → <code>{leech_dest}</code>
-┠ Leech by <b>{leech_method}</b> session
-┠ Mixed Leech → <b>{hybrid_leech}</b>
-┠ Thumbnail Layout → <b>{thumb_layout}</b>
-┖ Auto Merge → <b>{auto_merge}</b>
+┟ <b>Leech Type:</b> <code>{ltype}</code>
+┠ <b>Thumbnail:</b> <code>{thumbmsg}</code>
+┠ <b>Split Size:</b> <code>{get_readable_file_size(split_size)}</code>
+┠ <b>Equal Splits:</b> <code>{equal_splits}</code>
+┠ <b>Media Group:</b> <code>{media_group}</code>
+┠ <b>Prefix:</b> <code>{escape(lprefix)}</code>
+┠ <b>Suffix:</b> <code>{escape(lsuffix)}</code>
+┠ <b>Caption:</b> <code>{escape(lcap)}</code>
+┠ <b>Dump Chat:</b> <code>{leech_dest}</code>
+┠ <b>Leech By:</b> <code>{leech_method.capitalize()} session</code>
+┠ <b>Mixed Leech:</b> <code>{hybrid_leech}</code>
+┠ <b>Thumb Layout:</b> <code>{thumb_layout}</code>
+┖ <b>Auto Merge:</b> <code>{auto_merge}</code>
 """
 
     elif stype == "uphoster":
@@ -818,15 +817,14 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("Close", f"userset {user_id} close", "footer")
         btns = buttons.build_menu(2)
 
-        text = f"""⌬ <b>FF Settings :</b>
-┟ <b>Name</b> → {user_name}
+        text = f"""⚙️ <b><u>FFmpeg & Metadata</u></b>
 ┃
-┠ <b>FFmpeg CLI Commands</b> → {ffc}
+┟ <b>CLI Commands:</b> {ffc}
 ┃
-┠ <b>Default Metadata</b> → {display_meta_val}
-┠ <b>Audio Metadata</b> → {display_audio_meta}
-┠ <b>Video Metadata</b> → {display_video_meta}
-┖ <b>Subtitle Metadata</b> → {display_subtitle_meta}"""
+┠ <b>Global Metadata:</b> {display_meta_val}
+┠ <b>Audio Tracks:</b> {display_audio_meta}
+┠ <b>Video Tracks:</b> {display_video_meta}
+┖ <b>Subtitles:</b> {display_subtitle_meta}"""
 
     elif stype == "advanced":
         buttons.data_button(
@@ -1461,7 +1459,7 @@ async def toggle_auto_merge(_, message):
     auto_merge = user_dict.get("AUTO_MERGE", False)
     update_user_ldata(user_id, "AUTO_MERGE", not auto_merge)
     await database.update_user_data(user_id)
-    text = f"Auto Merge is now {'Enabled' if not auto_merge else 'Disabled'}."
+    text = f"<b>Auto Merge</b> has been {'Enabled' if not auto_merge else 'Disabled'}."
     await send_message(message, text)
 
 

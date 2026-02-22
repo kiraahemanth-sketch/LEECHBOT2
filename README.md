@@ -18,7 +18,7 @@
 
 - **Smart Track Remover System**: Advanced `/audio` command to selectively remove audio and subtitle tracks from video files.
 - **Smart Auto Extract**: Automatically extracts files ONLY if the filename or link contains `.zip`.
-- **Advanced Auto Merge**: Toggle with `/us2`. Merges multiple video parts (.part1, .part2, .001, etc.) automatically using FFmpeg concat (no re-encode).
+- **Advanced Auto Merge**: Toggle with `/merge`. Merges multiple video parts (.part1, .part2, .001, etc.) automatically using FFmpeg concat (no re-encode).
 - **Auto Split**: Automatically splits files larger than 4GB into 3.9GB parts for seamless Telegram upload.
 - **Global Metadata**: Apply custom metadata to your files after merging.
 - **Advanced UI**: Modern buttons, clean inline keyboard, and real-time progress bars for all stages.
@@ -42,7 +42,7 @@ How it works:
 
 1. **Download**: Bot downloads the requested link/file.
 2. **Smart Extract**: If `.zip` is detected in the name/link, it extracts the content.
-3. **Auto Merge**: If `/us2` is enabled, the bot detects video parts and merges them using FFmpeg `-c copy`.
+3. **Auto Merge**: If `/merge` is enabled, the bot detects video parts and merges them using FFmpeg `-c copy`.
 4. **Metadata**: Applies user-defined metadata (if enabled via `/us`).
 5. **Auto Split**: If the final result exceeds 4GB, it splits into 3.9GB parts.
 6. **Upload**: Sends files to Telegram or mirrors them to cloud storage.
@@ -53,7 +53,7 @@ How it works:
 ## ⚙️ Commands
 
 - `/us`: User Settings (Metadata, Leech Settings, etc.)
-- `/us2`: Toggle Auto Merge (Enabled/Disabled)
+- `/merge`: Toggle Auto Merge (Enabled/Disabled)
 - `/audio`: Smart Track Remover UI
 - `/mirror`: Mirror to Cloud
 - `/leech`: Leech to Telegram

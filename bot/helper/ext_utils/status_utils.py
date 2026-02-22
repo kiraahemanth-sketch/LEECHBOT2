@@ -200,9 +200,9 @@ def get_progress_bar_string(pct):
     pct = float(str(pct).strip("%"))
     p = min(max(pct, 0), 100)
     cFull = int(p // 10)
-    p_str = "■" * cFull
-    p_str += "□" * (10 - cFull)
-    return f"[{p_str}]"
+    p_str = "●" * cFull
+    p_str += "○" * (10 - cFull)
+    return f"«{p_str}»"
 
 
 async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
@@ -234,10 +234,10 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         msg += f"<b>{index + start_position}.</b> "
         msg += f"<b><i>{escape(f'{task.name()}')}</i></b>"
         if task.listener.subname:
-            msg += f"\n┖ <b>Sub Name</b> → <i>{task.listener.subname}</i>"
+            msg += f"\n┖ <b>Sub:</b> <i>{task.listener.subname}</i>"
         elapsed = time() - task.listener.message.date.timestamp()
 
-        msg += f"\n\n<b>Task By {task.listener.message.from_user.mention(style='html')} </b> ( #ID{task.listener.message.from_user.id} )"
+        msg += f"\n\n<b>👤 User:</b> {task.listener.message.from_user.mention(style='html')} (<code>{task.listener.message.from_user.id}</code>)"
         if task.listener.is_super_chat:
             msg += f" <i>[<a href='{task.listener.message.link}'>Link</a>]</i>"
 
@@ -246,17 +246,17 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             and task.listener.progress
         ):
             progress = task.progress()
-            msg += f"\n┟ {get_progress_bar_string(progress)} <i>{progress}</i>"
+            msg += f"\n┟ {get_progress_bar_string(progress)} <b>{progress}</b>"
             if task.listener.subname:
                 subsize = f" / {get_readable_file_size(task.listener.subsize)}"
                 ac = len(task.listener.files_to_proceed)
-                count = f"( {task.listener.proceed_count} / {ac or '?'} )"
+                count = f"({task.listener.proceed_count}/{ac or '?'})"
             else:
                 subsize = ""
                 count = ""
-            msg += f"\n┠ <b>Processed</b> → <i>{task.processed_bytes()}{subsize} of {task.size()}</i>"
+            msg += f"\n┠ <b>Done:</b> <code>{task.processed_bytes()}{subsize}</code> of <code>{task.size()}</code>"
             if count:
-                msg += f"\n┠ <b>Count:</b> → <b>{count}</b>"
+                msg += f"\n┠ <b>Count:</b> <code>{count}</code>"
             status_icon = {
                 MirrorStatus.STATUS_DOWNLOAD: "📥",
                 MirrorStatus.STATUS_EXTRACT: "📦",
@@ -274,9 +274,9 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
                 MirrorStatus.STATUS_SEED: "🌱",
                 MirrorStatus.STATUS_AUDIO: "🎙️",
             }.get(tstatus, "🔄")
-            msg += f"\n┠ <b>Status</b> → <b>{status_icon} {tstatus}</b>"
-            msg += f"\n┠ <b>Speed</b> → <i>{task.speed()}</i>"
-            msg += f"\n┠ <b>Time</b> → <i>{task.eta()} of {get_readable_time(elapsed + get_raw_time(task.eta()))} ( {get_readable_time(elapsed)} )</i>"
+            msg += f"\n┠ <b>Status:</b> <b>{status_icon} {tstatus}</b>"
+            msg += f"\n┠ <b>Speed:</b> <code>{task.speed()}</code>"
+            msg += f"\n┠ <b>ETA:</b> <code>{task.eta()}</code> | <b>Elapsed:</b> <code>{get_readable_time(elapsed)}</code>"
             if tstatus == MirrorStatus.STATUS_DOWNLOAD and (
                 task.listener.is_torrent or task.listener.is_qbit
             ):
@@ -307,14 +307,15 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         else:
             msg = f"No Active {status} Tasks!\n\n"
 
-    msg += "⌬ <b><u>Bot Stats</u></b>"
+    msg += "━━━━━━━━━━━━━━━━━━━━━━━\n"
+    msg += "📊 <b><u>Bot Statistics</u></b>\n"
     buttons = ButtonMaker()
     if not is_user:
-        buttons.data_button("📜 TStats", f"status {sid} ov", position="header")
+        buttons.data_button("📜 Overview", f"status {sid} ov", position="header")
     if len(tasks) > STATUS_LIMIT:
-        msg += f"<b>Page:</b> {page_no}/{pages} | <b>Tasks:</b> {tasks_no} | <b>Step:</b> {page_step}\n"
-        buttons.data_button("<<", f"status {sid} pre", position="header")
-        buttons.data_button(">>", f"status {sid} nex", position="header")
+        msg += f"📖 <b>Page:</b> <code>{page_no}/{pages}</code> | <b>Tasks:</b> <code>{tasks_no}</code>\n"
+        buttons.data_button("⏪", f"status {sid} pre", position="header")
+        buttons.data_button("⏩", f"status {sid} nex", position="header")
         if tasks_no > 30:
             for i in [1, 2, 4, 6, 8, 10, 15]:
                 buttons.data_button(i, f"status {sid} ps {i}", position="footer")
@@ -324,6 +325,6 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
                 buttons.data_button(label, f"status {sid} st {status_value}")
     buttons.data_button("♻️ Refresh", f"status {sid} ref", position="header")
     button = buttons.build_menu(8)
-    msg += f"\n┟ <b>CPU</b> → {cpu_percent()}% | <b>F</b> → {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)} [{round(100 - disk_usage(DOWNLOAD_DIR).percent, 1)}%]"
-    msg += f"\n┖ <b>RAM</b> → {virtual_memory().percent}% | <b>UP</b> → {get_readable_time(time() - bot_start_time)}"
+    msg += f"🖥 <b>CPU:</b> <code>{cpu_percent()}%</code> | 💿 <b>Free:</b> <code>{get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}</code>\n"
+    msg += f"⚙️ <b>RAM:</b> <code>{virtual_memory().percent}%</code> | 🕒 <b>Uptime:</b> <code>{get_readable_time(time() - bot_start_time)}</code>"
     return msg, button

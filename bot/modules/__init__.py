@@ -36,7 +36,7 @@ from .services import start, start_cb, login, ping, log, log_cb
 from .shell import run_shell
 from .stats import bot_stats, stats_pages, get_packages_version
 from .status import task_status, status_pages
-from .users_settings import get_users_settings, edit_user_settings, send_user_settings
+from .users_settings import get_users_settings, edit_user_settings, send_user_settings, toggle_auto_merge
 from .ytdlp import ytdl, ytdl_leech
 from .audio_handler import audio_handler, audio_callback
 
@@ -102,6 +102,7 @@ __all__ = [
     "get_users_settings",
     "edit_user_settings",
     "send_user_settings",
+    "toggle_auto_merge",
     "ytdl",
     "ytdl_leech",
     "audio_handler",

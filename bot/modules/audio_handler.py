@@ -11,7 +11,7 @@ from bot.core.tg_client import TgClient
 from bot.core.config_manager import Config, BinConfig
 from bot.helper.ext_utils.bot_utils import new_task, sync_to_async, arg_parser
 from bot.helper.ext_utils.media_utils import get_streams, FFMpeg
-from bot.helper.ext_utils.status_utils import MirrorStatus
+from bot.helper.ext_utils.status_utils import MirrorStatus, get_readable_file_size
 from bot.helper.telegram_helper.message_utils import send_message, edit_message, delete_message, auto_delete_message
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
@@ -55,7 +55,7 @@ class AudioProcess(TaskListener):
             msg = await send_message(self.message, "📥 Downloading link for processing...")
             self.dir = ospath.join(DOWNLOAD_DIR, str(self.mid))
             # Use aria2c for link download
-            cmd = ["aria2c", "-d", self.dir, "--allow-overwrite=true", self.link]
+            cmd = [BinConfig.ARIA2_NAME, "-d", self.dir, "--allow-overwrite=true", self.link]
             process = await create_subprocess_exec(*cmd, stdout=PIPE, stderr=PIPE)
             stdout, stderr = await process.communicate()
             if process.returncode != 0:
@@ -132,9 +132,11 @@ class AudioProcess(TaskListener):
         buttons.data_button("🚀 Encode & Send", f"audio {self.mid} process", position="footer")
         buttons.data_button("❌ Cancel", f"audio {self.mid} cancel", position="footer")
 
-        text = "🎯 <b>Smart Track Remover System</b>\n\n"
-        text += f"📄 <b>File:</b> <code>{self.name}</code>\n"
-        text += "Select the tracks you want to KEEP. Tracks marked with ❌ will be removed."
+        text = "🎯 <b><u>Smart Track Remover System</u></b>\n\n"
+        text += f"<b>📁 File:</b> <code>{self.name}</code>\n"
+        text += "━━━━━━━━━━━━━━━━━━━━━━━\n"
+        text += "<i>Select the tracks you want to KEEP. Tracks marked with ❌ will be removed from the final file.</i>\n\n"
+        text += "<b>Track List:</b>"
 
         await edit_message(msg, text, buttons.build_menu(1))
 
@@ -187,13 +189,14 @@ class AudioProcess(TaskListener):
             # Send to DM
             try:
                 processed_file_size = await get_path_size(output_path)
+                readable_size = get_readable_file_size(processed_file_size)
                 await self.client.send_document(
                     chat_id=self.user_id,
                     document=output_path,
-                    caption=f"✅ Processed: <code>{self.name}</code>\n💰 Size: {processed_file_size}",
+                    caption=f"<b>✅ Processed Successfully!</b>\n\n<b>📁 File:</b> <code>{self.name}</code>\n<b>💰 Size:</b> <code>{readable_size}</code>\n\n<b>Powered by ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡</b>",
                     file_name=self.name
                 )
-                await edit_message(msg, "📩 Processed file has been sent to your DM.")
+                await edit_message(msg, "<b>📩 Processed file has been sent to your DM.</b>")
             except Exception as e:
                 LOGGER.error(f"Error sending file to DM: {e}")
                 await edit_message(msg, f"❌ Error sending file to DM: {e}")

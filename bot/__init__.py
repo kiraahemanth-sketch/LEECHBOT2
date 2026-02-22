@@ -48,8 +48,8 @@ basicConfig(
 
 LOGGER = getLogger(__name__)
 cpu_no = cpu_count()
-threads = max(1, cpu_no // 2)
-cores = ",".join(str(i) for i in range(threads))
+threads = max(1, cpu_no)
+cores = ",".join(str(i) for i in range(max(1, cpu_no // 2)))
 
 bot_cache = {}
 DOWNLOAD_DIR = "/usr/src/app/downloads/"

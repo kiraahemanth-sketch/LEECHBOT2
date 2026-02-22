@@ -517,7 +517,7 @@ class FFMpeg:
         if self._listener.is_cancelled:
             return False
         if code == 0:
-            return outputs
+            return outputs or True
         elif code == -9:
             self._listener.is_cancelled = True
             return False
@@ -556,6 +556,8 @@ class FFMpeg:
                 "0",
                 "-c:v",
                 "libx264",
+                "-preset",
+                "ultrafast",
                 "-c:a",
                 "aac",
                 "-threads",
@@ -635,6 +637,8 @@ class FFMpeg:
             "pipe:1",
             "-i",
             audio_file,
+            "-preset",
+            "ultrafast",
             "-threads",
             f"{threads}",
             output,
@@ -716,6 +720,8 @@ class FFMpeg:
             "[aout]",
             "-c:v",
             "libx264",
+            "-preset",
+            "ultrafast",
             "-c:a",
             "aac",
             "-threads",

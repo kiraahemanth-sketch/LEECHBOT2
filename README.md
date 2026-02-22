@@ -23,6 +23,7 @@
 - **Global Metadata**: Apply custom metadata to your files after merging.
 - **Advanced UI**: Modern buttons, clean inline keyboard, and real-time progress bars for all stages.
 - **Fully Optimized**: Async operations, low RAM usage, and automatic cleanup of temporary files.
+- **Ultra High Speed**: Optimized FFmpeg presets (ultrafast), maximum concurrency, and uvloop integration for light-speed performance.
 - **Multi-Cloud Support**: Support for GDrive, Rclone, and various DDL hosts.
 
 ---

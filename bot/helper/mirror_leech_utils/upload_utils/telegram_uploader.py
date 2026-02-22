@@ -401,7 +401,7 @@ class TelegramUploader:
                         and not self._is_private
                     ):
                         self._msgs_dict[self._sent_msg.link] = file_
-                    await sleep(1)
+                    await sleep(0.2)
                 except Exception as err:
                     if isinstance(err, RetryError):
                         LOGGER.info(

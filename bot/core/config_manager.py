@@ -35,7 +35,7 @@ class Config:
     PROTECTED_API = ""
     BUZZHEAVIER_API = ""
     GDRIVE_ID = ""
-    GD_DESP = "Uploaded with WZ Bot"
+    GD_DESP = "Uploaded with ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Bot"
     AUTHOR_NAME = "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡"
     AUTHOR_URL = "https://t.me/ALONEKINGSTAR77"
     INSTADL_API = ""
@@ -95,7 +95,7 @@ class Config:
     SEARCH_PLUGINS = []
     SET_COMMANDS = True
     STATUS_LIMIT = 10
-    STATUS_UPDATE_INTERVAL = 15
+    STATUS_UPDATE_INTERVAL = 10
     STOP_DUPLICATE = False
     STREAMWISH_API = ""
     SUDO_USERS = ""

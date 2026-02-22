@@ -137,5 +137,5 @@ TgClient.bot.add_handler(
     )
 )
 
-LOGGER.info("WZ Client(s) & Services Started !")
+LOGGER.info("⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Client(s) & Services Started !")
 bot_loop.run_forever()

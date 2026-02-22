@@ -100,39 +100,55 @@ How it works:
 2. Add Environment Variables.
 3. Railway will auto-detect the Dockerfile.
 
-### 🧡 VPS DEPLOY (Ubuntu 22.04)
+### 🧡 VPS DEPLOY (Step-by-Step)
 
-1. **Install FFmpeg and Python**:
+1. **Update System**:
    ```bash
    sudo apt update && sudo apt upgrade -y
-   sudo apt install python3 python3-pip ffmpeg -y
    ```
-2. **Clone and Run**:
+2. **Install Dependencies**:
    ```bash
-   git clone https://github.com/kiraahemanth-sketch/LEECHBOT2 mirrorbot/
+   sudo apt install python3 python3-pip ffmpeg git libmagic-dev screen -y
+   ```
+3. **Clone Repository**:
+   ```bash
+   git clone https://github.com/kiraahemanth-sketch/LEECHBOT2 mirrorbot
    cd mirrorbot
-   pip3 install -r requirements.txt
-   bash start.sh
    ```
-3. **One-Click Deploy**:
+4. **Install Python Packages**:
    ```bash
-   bash <(curl -sL https://raw.githubusercontent.com/kiraahemanth-sketch/LEECHBOT2/master/deploy_vps.sh)
+   pip3 install uv
+   uv pip install --system -r requirements.txt
    ```
-4. **Keep Alive**: Use `screen` or `tmux` to keep the bot running. For auto-restart, use `systemd`.
-
-### 📱 DareMote Mobile Deploy (Termux)
-
-1. **Install Termux** from F-Droid.
-2. **Run One-Click Script**:
+5. **Configure Bot**:
+   Edit `config.py` or set Environment Variables.
+6. **Start Bot**:
    ```bash
-   bash <(curl -sL https://raw.githubusercontent.com/kiraahemanth-sketch/LEECHBOT2/master/deploy_vps.sh)
+   screen -dmS wzml python3 -m bot
    ```
-3. **Manual Install**:
-   - `pkg update && pkg upgrade`
-   - `pkg install python ffmpeg git`
-   - `git clone https://github.com/kiraahemanth-sketch/LEECHBOT2`
-   - `cd ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ && pip install -r requirements.txt`
-   - `bash start.sh`
+   *Use `screen -r wzml` to view the console.*
+
+### 📱 DareMote Mobile (Termux) Guide
+
+1. **Setup Termux**:
+   - Install Termux from [F-Droid](https://f-droid.org/en/packages/com.termux/).
+   - Open Termux and run:
+   ```bash
+   pkg update && pkg upgrade
+   pkg install python ffmpeg git libmagic -y
+   ```
+2. **Clone & Install**:
+   ```bash
+   git clone https://github.com/kiraahemanth-sketch/LEECHBOT2
+   cd LEECHBOT2
+   pip install -r requirements.txt
+   ```
+3. **Run Bot**:
+   ```bash
+   python3 -m bot
+   ```
+4. **Keep Alive**:
+   Use [Termux-Wake-Lock](https://wiki.termux.com/wiki/Termux-wake-lock) to prevent the OS from killing the process.
 
 ---
 

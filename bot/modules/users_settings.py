@@ -186,7 +186,7 @@ Here I will explain how to use mltb.* which is reference to files you want to wo
     "METADATA_CMDS": (
         "",
         "",
-        """<i>Send your Meta data. You can according to the format title="Join @ALONEKINGSTAR77".</i>
+        """<i>Send your Meta data. You can according to the format title="Join @HEMANTH".</i>
 <b>Full Documentation Guide</b> <a href="https://t.me/ALONEKINGSTAR77/">Click Here</a>
 ┖ <b>Time Left :</b> <code>60 sec</code>
 """,
@@ -363,8 +363,8 @@ async def get_user_settings(from_user, stype="main"):
             f"userset {user_id} tog USER_TOKENS {'f' if user_tokens else 't'}",
         )
 
-        buttons.data_button("Back", f"userset {user_id} back", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
 
         def_cookies = user_dict.get("USE_DEFAULT_COOKIE", False)
         cookie_mode = "Owner's Cookie" if def_cookies else "User's Cookie"
@@ -518,8 +518,8 @@ async def get_user_settings(from_user, stype="main"):
             buttons.data_button("Enable Auto Merge", f"userset {user_id} tog AUTO_MERGE t")
             auto_merge = "Disabled"
 
-        buttons.data_button("Back", f"userset {user_id} back", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(2)
 
         text = f"""📤 <b><u>Leech Configuration</u></b>
@@ -548,8 +548,8 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("Gofile Tools", f"userset {user_id} gofile")
         buttons.data_button("BuzzHeavier Tools", f"userset {user_id} buzzheavier")
         buttons.data_button("PixelDrain Tools", f"userset {user_id} pixeldrain")
-        buttons.data_button("Back", f"userset {user_id} back", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
         destinations = [s.capitalize() for s in uphoster_service.split(",")]
@@ -561,7 +561,7 @@ async def get_user_settings(from_user, stype="main"):
     elif stype == "pixeldrain":
         buttons.data_button("PixelDrain Key", f"userset {user_id} menu PIXELDRAIN_KEY")
         buttons.data_button("Back", f"userset {user_id} back uphoster", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
         if user_dict.get("PIXELDRAIN_KEY", False):
@@ -584,7 +584,7 @@ async def get_user_settings(from_user, stype="main"):
             "BuzzHeavier Folder ID", f"userset {user_id} menu BUZZHEAVIER_FOLDER_ID"
         )
         buttons.data_button("Back", f"userset {user_id} back uphoster", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
         if user_dict.get("BUZZHEAVIER_TOKEN", False):
@@ -611,7 +611,7 @@ async def get_user_settings(from_user, stype="main"):
             "Gofile Folder ID", f"userset {user_id} menu GOFILE_FOLDER_ID"
         )
         buttons.data_button("Back", f"userset {user_id} back uphoster", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
         if user_dict.get("GOFILE_TOKEN", False):
@@ -642,7 +642,7 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("Rclone Flags", f"userset {user_id} menu RCLONE_FLAGS")
 
         buttons.data_button("Back", f"userset {user_id} back mirror", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
 
         rccmsg = "Exists" if await aiopath.exists(rclone_conf) else "Not Exists"
         if user_dict.get("RCLONE_PATH", False):
@@ -688,7 +688,7 @@ async def get_user_settings(from_user, stype="main"):
             )
             sd_msg = "Disabled"
         buttons.data_button("Back", f"userset {user_id} back mirror", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
 
         tokenmsg = "Exists" if await aiopath.exists(token_pickle) else "Not Exists"
         if user_dict.get("GDRIVE_ID", False):
@@ -737,8 +737,8 @@ async def get_user_settings(from_user, stype="main"):
             sd_msg = "Disabled"
 
         buttons.data_button("YT Up Tools", f"userset {user_id} yttools")
-        buttons.data_button("Back", f"userset {user_id} back", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
         text = f"""⌬ <b>Mirror Settings :</b>
@@ -813,8 +813,8 @@ async def get_user_settings(from_user, stype="main"):
             )
             display_subtitle_meta = f"<code>{display_subtitle_meta}</code>"
 
-        buttons.data_button("Back", f"userset {user_id} back", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(2)
 
         text = f"""⚙️ <b><u>FFmpeg & Metadata</u></b>
@@ -870,8 +870,8 @@ async def get_user_settings(from_user, stype="main"):
             "YT Cookie File", f"userset {user_id} menu USER_COOKIE_FILE"
         )
 
-        buttons.data_button("Back", f"userset {user_id} back", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
         text = f"""⌬ <b>Advanced Settings :</b>
@@ -920,7 +920,7 @@ async def get_user_settings(from_user, stype="main"):
         )
 
         buttons.data_button("Back", f"userset {user_id} back mirror", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(2)
 
         text = f"""⌬ <b>YouTube Tools Settings:</b>
@@ -1160,7 +1160,7 @@ async def get_menu(option, message, user_id):
     else:
         back_to = "back"
     buttons.data_button("Back", f"userset {user_id} {back_to}", "footer")
-    buttons.data_button("Close", f"userset {user_id} close", "footer")
+    buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
     val = user_dict.get(option)
     if option in file_dict and await aiopath.exists(file_dict[option]):
         val = "<b>Exists</b>"
@@ -1323,7 +1323,7 @@ async def edit_user_settings(client, query):
             )
 
         buttons.data_button("Back", f"userset {user_id} back uphoster", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
 
         text = f"""⌬ <b>Select Uphoster Destinations :</b>"""
         await edit_message(message, text, buttons.build_menu(1))
@@ -1347,7 +1347,7 @@ async def edit_user_settings(client, query):
         text = user_settings_text[data[3]][2]
         buttons.data_button("Stop", f"userset {user_id} menu {data[3]} stop")
         buttons.data_button("Back", f"userset {user_id} menu {data[3]}", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         prompt_title = data[3].replace("_", " ").title()
         new_message_text = f"⌬ <b>Set {prompt_title}</b>\n\n{text}"
         await edit_message(message, new_message_text, buttons.build_menu(1))
@@ -1375,7 +1375,7 @@ async def edit_user_settings(client, query):
             func = remove_one
         buttons.data_button("Stop", f"userset {user_id} menu {data[3]} stop")
         buttons.data_button("Back", f"userset {user_id} menu {data[3]}", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         await edit_message(
             message, message.text.html + "\n\n" + text, buttons.build_menu(1)
         )
@@ -1416,7 +1416,7 @@ async def edit_user_settings(client, query):
         buttons = ButtonMaker()
         buttons.data_button("Yes", f"userset {user_id} do_reset_all yes")
         buttons.data_button("No", f"userset {user_id} do_reset_all no")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         text = "<i>Are you sure you want to reset all your user settings?</i>"
         await edit_message(query.message, text, buttons.build_menu(2))
     elif data[2] == "do_reset_all":

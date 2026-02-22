@@ -13,7 +13,7 @@ else
 fi
 
 echo "📂 Cloning repository..."
-git clone https://github.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ mirrorbot
+git clone https://github.com/kiraahemanth-sketch/LEECHBOT2 mirrorbot
 cd mirrorbot
 
 echo "📦 Installing high-performance requirements using uv..."

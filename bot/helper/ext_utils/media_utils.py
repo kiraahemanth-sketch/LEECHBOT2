@@ -225,10 +225,10 @@ async def take_ss(video_file, ss_nb) -> bool:
             cap_time += interval
             cmds.append(cmd_exec(cmd))
         try:
-            resutls = await wait_for(gather(*cmds), timeout=60)
-            if resutls[0][2] != 0:
+            results = await wait_for(gather(*cmds), timeout=60)
+            if results[0][2] != 0:
                 LOGGER.error(
-                    f"Error while creating screenshots from video. Path: {video_file}. stderr: {resutls[0][1]}"
+                    f"Error while creating screenshots from video. Path: {video_file}. stderr: {results[0][1]}"
                 )
                 await rmtree(dirpath, ignore_errors=True)
                 return False

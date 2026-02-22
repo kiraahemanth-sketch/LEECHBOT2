@@ -45,6 +45,8 @@ class FFmpegStatus:
             return MirrorStatus.STATUS_MERGE
         elif self._cstatus == "Sample Video":
             return MirrorStatus.STATUS_SAMVID
+        elif self._cstatus == "AudioProcess":
+            return MirrorStatus.STATUS_AUDIO
         else:
             return MirrorStatus.STATUS_FFMPEG
 

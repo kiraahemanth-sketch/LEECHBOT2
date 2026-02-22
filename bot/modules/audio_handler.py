@@ -1,6 +1,7 @@
 from pyrogram.filters import command, regex
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.enums import ButtonStyle
 from os import path as ospath
 from asyncio import create_subprocess_exec, gather
 from asyncio.subprocess import PIPE
@@ -49,7 +50,12 @@ class AudioProcess(TaskListener):
             file_size = file.file_size
             msg = await send_message(self.message, "📥 Downloading file for processing...")
             self.dir = ospath.join(DOWNLOAD_DIR, str(self.mid))
-            file_path = await self.client.download_media(reply_to, file_name=ospath.join(self.dir, file_name))
+            try:
+                file_path = await self.client.download_media(reply_to, file_name=ospath.join(self.dir, file_name))
+            except Exception as e:
+                await edit_message(msg, f"❌ Download failed: {e}")
+                await clean_target(self.dir)
+                return
         elif len(self.message.command) > 1:
             self.link = self.message.command[1]
             msg = await send_message(self.message, "📥 Downloading link for processing...")
@@ -129,8 +135,8 @@ class AudioProcess(TaskListener):
 
             buttons.data_button(label, f"audio {self.mid} toggle {i}")
 
-        buttons.data_button("🚀 Encode & Send", f"audio {self.mid} process", position="footer")
-        buttons.data_button("❌ Cancel", f"audio {self.mid} cancel", position="footer")
+        buttons.data_button("🚀 Encode & Send", f"audio {self.mid} process", position="footer", style=ButtonStyle.SUCCESS)
+        buttons.data_button("❌ Cancel", f"audio {self.mid} cancel", position="footer", style=ButtonStyle.DANGER)
 
         text = "🎯 <b><u>Smart Track Remover System</u></b>\n\n"
         text += f"<b>📁 File:</b> <code>{self.name}</code>\n"

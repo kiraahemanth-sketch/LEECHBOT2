@@ -74,7 +74,7 @@ How it works:
    - `OWNER_ID`
    - `WEBHOOK_URL` (Optional)
 2. **One-Click Deploy**:
-   [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡)
+   [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kiraahemanth-sketch/LEECHBOT2)
 3. **Worker Dyno**: After deployment, go to the Resources tab and enable the `worker` dyno.
 
 ### 💙 KOYEB DEPLOY
@@ -105,14 +105,14 @@ How it works:
    ```
 2. **Clone and Run**:
    ```bash
-   git clone https://github.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ mirrorbot/
+   git clone https://github.com/kiraahemanth-sketch/LEECHBOT2 mirrorbot/
    cd mirrorbot
    pip3 install -r requirements.txt
    bash start.sh
    ```
 3. **One-Click Deploy**:
    ```bash
-   bash <(curl -sL https://raw.githubusercontent.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡/master/deploy_vps.sh)
+   bash <(curl -sL https://raw.githubusercontent.com/kiraahemanth-sketch/LEECHBOT2/master/deploy_vps.sh)
    ```
 4. **Keep Alive**: Use `screen` or `tmux` to keep the bot running. For auto-restart, use `systemd`.
 
@@ -121,12 +121,12 @@ How it works:
 1. **Install Termux** from F-Droid.
 2. **Run One-Click Script**:
    ```bash
-   bash <(curl -sL https://raw.githubusercontent.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡/master/deploy_vps.sh)
+   bash <(curl -sL https://raw.githubusercontent.com/kiraahemanth-sketch/LEECHBOT2/master/deploy_vps.sh)
    ```
 3. **Manual Install**:
    - `pkg update && pkg upgrade`
    - `pkg install python ffmpeg git`
-   - `git clone https://github.com/alonekingstar77/⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡`
+   - `git clone https://github.com/kiraahemanth-sketch/LEECHBOT2`
    - `cd ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ && pip install -r requirements.txt`
    - `bash start.sh`
 
@@ -134,7 +134,7 @@ How it works:
 
 ## 🏅 **Bot Authors**
 
-|[`alonekingstar77`](https://github.com/alonekingstar77)|[`RjRiajul`](https://github.com/rjriajul)|[`CodeWithWeeb`](https://github.com/weebzone)|
+|[`HEMANTH`](https://github.com/kiraahemanth-sketch)|[`alonekingstar77`](https://github.com/alonekingstar77)|[`RjRiajul`](https://github.com/rjriajul)|
 |:---:|:---:|:---:|
 
 ---

@@ -41,7 +41,7 @@ async def delete_broadcast(bc_id, message):
         total += 1
     return await edit_message(
         temp_wait,
-        f"""⌬  <b><i>Broadcast Deleted Stats :</i></b>
+        f"""⚡  <b><i>Broadcast Deleted Stats :</i></b>
 ┠ <b>Total Users:</b> <code>{total}</code>
 ┠ <b>Success:</b> <code>{success}</code>
 ┖ <b>Failed Attempts:</b> <code>{failed}</code>
@@ -88,7 +88,7 @@ async def edit_broadcast(bc_id, message, rply):
         total += 1
     return await edit_message(
         temp_wait,
-        f"""⌬  <b><i>Broadcast Edited Stats :</i></b>
+        f"""⚡  <b><i>Broadcast Edited Stats :</i></b>
 ┠ <b>Total Users:</b> <code>{total}</code>
 ┠ <b>Success:</b> <code>{success}</code>
 ┖ <b>Failed Attempts:</b> <code>{failed}</code>
@@ -154,7 +154,7 @@ async def broadcast(_, message):
 
     # Broadcasting logic
     start_time = time()
-    status = """⌬  <b><i>Broadcast Stats :</i></b>
+    status = """⚡  <b><i>Broadcast Stats :</i></b>
 ┠ <b>Total Users:</b> <code>{t}</code>
 ┠ <b>Success:</b> <code>{s}</code>
 ┠ <b>Blocked Users:</b> <code>{b}</code>

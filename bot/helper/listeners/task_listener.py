@@ -703,10 +703,20 @@ class TaskListener(TaskConfig):
         if self._ftool_choice == "ssgrid":
             res = await ffmpeg.generate_screenshot_grid(dl_path, f"{self.name}_grid.png")
             if res:
-                await ffmpeg.convert_to_pdf(res, f"{self.name}_grid.pdf")
+                pdf = await ffmpeg.convert_to_pdf(res, f"{self.name}_grid.pdf")
+                await gather(
+                    send_file(self.message, res, f"Screenshot Grid for {self.name}"),
+                    send_file(self.message, pdf, f"Screenshot PDF for {self.name}")
+                )
+                await gather(remove(res), remove(pdf))
         elif self._ftool_choice == "watermark":
-            # Just a placeholder for now as it needs a watermark path
-            pass
+            wpath = f"watermarks/{self.user_id}.png"
+            if await aiopath.exists(wpath):
+                res = await ffmpeg.watermark(dl_path, wpath, f"WM_{self.name}")
+                if res:
+                    dl_path = res
+            else:
+                await send_message(self.message, "Watermark file not found! Upload one in /us > FF Tools")
         elif self._ftool_choice == "encode":
             res = await ffmpeg.encode(dl_path, f"ENC_{self.name}")
             if res:

@@ -393,7 +393,7 @@ async def get_user_settings(from_user, stype="main"):
         )
         btns = buttons.build_menu(1)
 
-        text = f"""⌬ <b>General Settings :</b>
+        text = f"""⚡ <b>General Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Default Upload Package</b> → <b>{du}</b>
@@ -572,7 +572,7 @@ async def get_user_settings(from_user, stype="main"):
         btns = buttons.build_menu(1)
 
         destinations = [s.capitalize() for s in uphoster_service.split(",")]
-        text = f"""⌬ <b>Uphoster Settings :</b>
+        text = f"""⚡ <b>Uphoster Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┖ <b>Current Destination</b> → {', '.join(destinations)}"""
@@ -590,7 +590,7 @@ async def get_user_settings(from_user, stype="main"):
         else:
             pdtoken = "None"
 
-        text = f"""⌬ <b>PixelDrain Settings :</b>
+        text = f"""⚡ <b>PixelDrain Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┖ <b>PixelDrain Key</b> → <code>{pdtoken}</code>"""
@@ -618,7 +618,7 @@ async def get_user_settings(from_user, stype="main"):
         else:
             bzfolder = "None"
 
-        text = f"""⌬ <b>BuzzHeavier Settings :</b>
+        text = f"""⚡ <b>BuzzHeavier Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>BuzzHeavier Token</b> → <code>{bztoken}</code>
@@ -647,7 +647,7 @@ async def get_user_settings(from_user, stype="main"):
         else:
             gffolder = "None (Uploads to Root)"
 
-        text = f"""⌬ <b>Gofile Settings :</b>
+        text = f"""⚡ <b>Gofile Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Gofile Token</b> → <code>{gftoken}</code>
@@ -679,7 +679,7 @@ async def get_user_settings(from_user, stype="main"):
         else:
             rcflags = "None"
 
-        text = f"""⌬ <b>RClone Settings :</b>
+        text = f"""⚡ <b>RClone Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Rclone Config</b> → <b>{rccmsg}</b>
@@ -719,7 +719,7 @@ async def get_user_settings(from_user, stype="main"):
         index = user_dict["INDEX_URL"] if user_dict.get("INDEX_URL", False) else "None"
         btns = buttons.build_menu(2)
 
-        text = f"""⌬ <b>GDrive Tools Settings :</b>
+        text = f"""⚡ <b>GDrive Tools Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Gdrive Token</b> → <b>{tokenmsg}</b>
@@ -760,7 +760,7 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
-        text = f"""⌬ <b>Mirror Settings :</b>
+        text = f"""⚡ <b>Mirror Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Rclone Config</b> → <b>{rccmsg}</b>
@@ -874,7 +874,7 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("Close", f"userset {user_id} close", "footer")
         btns = buttons.build_menu(2)
 
-        text = f"""🌀 <b>FF Settings :</b>
+        text = f"""⚡ <b>FF Settings :</b>
 ┌<b>Name</b> » {from_user.first_name}
 │
 ├ <b>FFmpeg Commands</b> » {'Exists' if user_dict.get('FFMPEG_CMDS') else 'Not Exists'}
@@ -935,7 +935,7 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
-        text = f"""⌬ <b>Advanced Settings :</b>
+        text = f"""⚡ <b>Advanced Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Name Swaps</b> → {ns_msg}
@@ -984,7 +984,7 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(2)
 
-        text = f"""⌬ <b>YouTube Tools Settings:</b>
+        text = f"""⚡ <b>YouTube Tools Settings:</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>YT Description</b> → <code>{escape(str(yt_desp_val))}</code>
@@ -1251,7 +1251,7 @@ async def get_menu(option, message, user_id):
             val = "<b>Not Exists</b>"
 
     if option == "METADATA":
-        text = f"""⌬ <b><u>Menu Settings :</u></b>
+        text = f"""⚡ <b><u>Menu Settings :</u></b>
 │
 ┟ <b>Option</b> → {option}
 ┃
@@ -1269,7 +1269,7 @@ async def get_menu(option, message, user_id):
 ┖ • <code>{{sublang}}</code> - Subtitle language
 """
     else:
-        text = f"""⌬ <b><u>Menu Settings :</u></b>
+        text = f"""⚡ <b><u>Menu Settings :</u></b>
 │
 ┟ <b>Option</b> → {option}
 ┃
@@ -1393,7 +1393,7 @@ async def edit_user_settings(client, query):
         buttons.data_button("Back", f"userset {user_id} back uphoster", "footer")
         buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
 
-        text = f"""⌬ <b>Select Uphoster Destinations :</b>"""
+        text = f"""⚡ <b>Select Uphoster Destinations :</b>"""
         await edit_message(message, text, buttons.build_menu(1))
     elif data[2] == "menu":
         await query.answer()
@@ -1419,7 +1419,7 @@ async def edit_user_settings(client, query):
         buttons.data_button("Back", f"userset {user_id} menu {data[3]}", "footer")
         buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         prompt_title = data[3].replace("_", " ").title()
-        new_message_text = f"⌬ <b>Set {prompt_title}</b>\n\n{text}"
+        new_message_text = f"⚡ <b>Set {prompt_title}</b>\n\n{text}"
         await edit_message(message, new_message_text, buttons.build_menu(1))
         rfunc = partial(get_menu, data[3], message, user_id)
         pfunc = partial(add_file, ftype=data[3], rfunc=rfunc)

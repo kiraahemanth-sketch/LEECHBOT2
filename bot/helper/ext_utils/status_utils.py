@@ -234,19 +234,19 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         msg += f"<b>{index + start_position}.</b> "
         msg += f"<b><i>{escape(f'{task.name()}')}</i></b>"
         if task.listener.subname:
-            msg += f"\n┖ <b>Sub:</b> <i>{task.listener.subname}</i>"
+            msg += f"\n┖ 📁 <b>Sub:</b> <i>{task.listener.subname}</i>"
         elapsed = time() - task.listener.message.date.timestamp()
 
-        msg += f"\n\n<b>👤 User:</b> {task.listener.message.from_user.mention(style='html')} (<code>{task.listener.message.from_user.id}</code>)"
+        msg += f"\n\n👤 <b>User:</b> {task.listener.message.from_user.mention(style='html')} (<code>{task.listener.message.from_user.id}</code>)"
         if task.listener.is_super_chat:
-            msg += f" <i>[<a href='{task.listener.message.link}'>Link</a>]</i>"
+            msg += f" 🔗 <i>[<a href='{task.listener.message.link}'>Link</a>]</i>"
 
         if (
             tstatus not in [MirrorStatus.STATUS_SEED, MirrorStatus.STATUS_QUEUEUP]
             and task.listener.progress
         ):
             progress = task.progress()
-            msg += f"\n┟ {get_progress_bar_string(progress)} <b>{progress}</b>"
+            msg += f"\n{get_progress_bar_string(progress)} <b>{progress}</b>"
             if task.listener.subname:
                 subsize = f" / {get_readable_file_size(task.listener.subsize)}"
                 ac = len(task.listener.files_to_proceed)
@@ -254,7 +254,7 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             else:
                 subsize = ""
                 count = ""
-            msg += f"\n┠ <b>Done:</b> <code>{task.processed_bytes()}{subsize}</code> of <code>{task.size()}</code>"
+            msg += f"\n┟ <b>Done:</b> <code>{task.processed_bytes()}{subsize}</code> of <code>{task.size()}</code>"
             if count:
                 msg += f"\n┠ <b>Count:</b> <code>{count}</code>"
             status_icon = {
@@ -276,7 +276,7 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             }.get(tstatus, "🔄")
             msg += f"\n┠ <b>Status:</b> <b>{status_icon} {tstatus}</b>"
             msg += f"\n┠ <b>Speed:</b> <code>{task.speed()}</code>"
-            msg += f"\n┠ <b>ETA:</b> <code>{task.eta()}</code> | <b>Elapsed:</b> <code>{get_readable_time(elapsed)}</code>"
+            msg += f"\n┖ <b>ETA:</b> <code>{task.eta()}</code> | <b>Elapsed:</b> <code>{get_readable_time(elapsed)}</code>"
             if tstatus == MirrorStatus.STATUS_DOWNLOAD and (
                 task.listener.is_torrent or task.listener.is_qbit
             ):

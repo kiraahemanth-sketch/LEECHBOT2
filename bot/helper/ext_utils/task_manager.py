@@ -286,7 +286,7 @@ async def pre_task_check(message):
 
     if msg:
         username = message.from_user.mention
-        final_msg = f"⌬ <b>Task Checks :</b>\n│\n┟ <b>Name</b> → {username}\n┃\n"
+        final_msg = f"⚡ <b>Task Checks :</b>\n│\n┟ <b>Name</b> → {username}\n┃\n"
         for i, m_part in enumerate(msg, 1):
             final_msg += f"{m_part}\n"
         if button is not None:

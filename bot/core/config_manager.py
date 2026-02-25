@@ -35,9 +35,9 @@ class Config:
     PROTECTED_API = ""
     BUZZHEAVIER_API = ""
     GDRIVE_ID = ""
-    GD_DESP = "Uploaded with WZ Bot"
-    AUTHOR_NAME = "WZML-X"
-    AUTHOR_URL = "https://t.me/WZML_X"
+    GD_DESP = "Uploaded with ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Bot"
+    AUTHOR_NAME = "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡"
+    AUTHOR_URL = "https://t.me/ALONEKINGSTAR77"
     INSTADL_API = ""
     IMDB_TEMPLATE = ""
     INCOMPLETE_TASK_NOTIFIER = False
@@ -95,7 +95,7 @@ class Config:
     SEARCH_PLUGINS = []
     SET_COMMANDS = True
     STATUS_LIMIT = 10
-    STATUS_UPDATE_INTERVAL = 15
+    STATUS_UPDATE_INTERVAL = 10
     STOP_DUPLICATE = False
     STREAMWISH_API = ""
     SUDO_USERS = ""
@@ -119,7 +119,7 @@ class Config:
     USE_SERVICE_ACCOUNTS = False
     WEB_PINCODE = True
     YT_DLP_OPTIONS = {}
-    YT_DESP = "Uploaded with WZML-X bot"
+    YT_DESP = "Uploaded with ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ bot"
     YT_TAGS = ["telegram", "bot", "youtube"]
     YT_CATEGORY_ID = 22
     YT_PRIVACY_STATUS = "unlisted"

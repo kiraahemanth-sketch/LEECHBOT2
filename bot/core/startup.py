@@ -78,7 +78,7 @@ async def update_nzb_options():
 async def load_settings():
     if not Config.DATABASE_URL:
         return
-    for p in ["thumbnails", "tokens", "rclone"]:
+    for p in ["thumbnails", "tokens", "rclone", "watermarks"]:
         if await aiopath.exists(p):
             await rmtree(p, ignore_errors=True)
     await database.connect()
@@ -169,6 +169,7 @@ async def load_settings():
                     "RCLONE_CONFIG": f"rclone/{uid}.conf",
                     "TOKEN_PICKLE": f"tokens/{uid}.pickle",
                     "USER_COOKIE_FILE": f"cookies/{uid}/cookies.txt",
+                    "WATERMARK_FILE": f"watermarks/{uid}.png",
                 }
 
                 async def save_file(file_path, content):

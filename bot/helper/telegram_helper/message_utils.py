@@ -2,7 +2,7 @@ from asyncio import sleep, gather
 from re import match as re_match
 from time import time
 
-from pyrogram.types import Message
+from pyrogram.types import Message, LinkPreviewOptions
 from pyrogram.enums import ParseMode
 from pyrogram.errors import (
     FloodWait,
@@ -75,14 +75,14 @@ async def send_message(message, text, buttons=None, block=True, photo=None, **kw
             return await TgClient.bot.send_message(
                 chat_id=message,
                 text=text,
-                disable_web_page_preview=True,
+                link_preview_options=LinkPreviewOptions(is_disabled=True),
                 disable_notification=True,
                 reply_markup=buttons,
             )
         return await message.reply(
             text=text,
             quote=True,
-            disable_web_page_preview=True,
+            link_preview_options=LinkPreviewOptions(is_disabled=True),
             disable_notification=True,
             reply_markup=buttons,
             **kwargs,
@@ -107,7 +107,7 @@ async def edit_message(message, text, buttons=None, block=True):
     try:
         return await message.edit(
             text=text,
-            disable_web_page_preview=True,
+            link_preview_options=LinkPreviewOptions(is_disabled=True),
             reply_markup=buttons,
         )
     except (MessageNotModified, MessageEmpty):
@@ -164,7 +164,7 @@ async def send_rss(text, chat_id, thread_id):
         return await app.send_message(
             chat_id=chat_id,
             text=text,
-            disable_web_page_preview=True,
+            link_preview_options=LinkPreviewOptions(is_disabled=True),
             message_thread_id=thread_id,
             disable_notification=True,
         )

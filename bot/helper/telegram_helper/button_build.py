@@ -1,4 +1,6 @@
+from random import choice
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.enums import ButtonStyle
 
 
 class ButtonMaker:
@@ -10,15 +12,20 @@ class ButtonMaker:
             "l_body": [],
             "footer": [],
         }
+        self._styles = [ButtonStyle.PRIMARY, ButtonStyle.SUCCESS, ButtonStyle.DANGER, ButtonStyle.WARNING]
 
-    def url_button(self, key, link, position=None):
+    def url_button(self, key, link, position=None, style=None, emoji=None):
+        if not style:
+            style = choice(self._styles)
         self.buttons[position if position in self.buttons else "default"].append(
-            InlineKeyboardButton(text=key, url=link)
+            InlineKeyboardButton(text=key, url=link, style=style, icon_custom_emoji_id=emoji)
         )
 
-    def data_button(self, key, data, position=None):
+    def data_button(self, key, data, position=None, style=None, emoji=None):
+        if not style:
+            style = choice(self._styles)
         self.buttons[position if position in self.buttons else "default"].append(
-            InlineKeyboardButton(text=key, callback_data=data)
+            InlineKeyboardButton(text=key, callback_data=data, style=style, icon_custom_emoji_id=emoji)
         )
 
     def build_menu(self, b_cols=1, h_cols=8, fb_cols=2, lb_cols=2, f_cols=8):

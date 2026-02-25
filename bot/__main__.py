@@ -81,26 +81,22 @@ async def main():
 
 bot_loop.run_until_complete(main())
 
+from pyrogram.filters import regex
+from pyrogram.handlers import CallbackQueryHandler
+
 from .core.handlers import add_handlers
-from .helper.ext_utils.bot_utils import create_help_buttons
+from .core.plugin_manager import get_plugin_manager
+from .helper.ext_utils.bot_utils import create_help_buttons, new_task
 from .helper.listeners.aria2_listener import add_aria2_callbacks
+from .modules.plugin_manager import register_plugin_commands
 
 add_aria2_callbacks()
 create_help_buttons()
 add_handlers()
 
-from .core.plugin_manager import get_plugin_manager
-from .modules.plugin_manager import register_plugin_commands
-
 plugin_manager = get_plugin_manager()
 plugin_manager.bot = TgClient.bot
 register_plugin_commands()
-
-from pyrogram.filters import regex
-from pyrogram.handlers import CallbackQueryHandler
-
-from .core.handlers import add_handlers
-from .helper.ext_utils.bot_utils import new_task
 from .helper.telegram_helper.filters import CustomFilters
 from .helper.telegram_helper.message_utils import (
     delete_message,

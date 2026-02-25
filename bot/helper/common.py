@@ -1237,7 +1237,6 @@ class TaskConfig:
 
         ffmpeg = FFMpeg(self)
         async with task_dict_lock:
-            from .mirror_leech_utils.status_utils.ffmpeg_status import FFmpegStatus
             task_dict[self.mid] = FFmpegStatus(self, ffmpeg, gid, "Merge")
 
         LOGGER.info(f"Merging parts for: {list(base_names)[0]}")

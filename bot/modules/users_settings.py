@@ -1,3 +1,4 @@
+from ast import literal_eval
 from asyncio import sleep
 from functools import partial
 from html import escape
@@ -1049,8 +1050,8 @@ async def add_one(_, message, option, rfunc):
     value = message.text
     if value.startswith("{") and value.endswith("}"):
         try:
-            value = eval(value)
-            if user_dict[option]:
+            value = literal_eval(value)
+            if user_dict.get(option):
                 user_dict[option].update(value)
             else:
                 update_user_ldata(user_id, option, value)
@@ -1161,7 +1162,7 @@ async def set_option(_, message, option, rfunc):
     elif option in ["UPLOAD_PATHS", "FFMPEG_CMDS", "YT_DLP_OPTIONS"]:
         if value.startswith("{") and value.endswith("}"):
             try:
-                value = eval(sub(r"\s+", " ", value))
+                value = literal_eval(sub(r"\s+", " ", value))
             except Exception as e:
                 await send_message(message, str(e))
                 return

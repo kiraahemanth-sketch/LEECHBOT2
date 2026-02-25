@@ -4,6 +4,7 @@ from uvloop import install
 
 install()
 
+import shutil
 from subprocess import run as srun
 from os import getcwd
 from asyncio import Lock, new_event_loop, set_event_loop
@@ -100,6 +101,8 @@ sabnzbd_client = SabnzbdClient(
     api_key="admin",
     port="8070",
 )
-srun([BinConfig.QBIT_NAME, "-d", f"--profile={getcwd()}"], check=False)
+
+if shutil.which(BinConfig.QBIT_NAME):
+    srun([BinConfig.QBIT_NAME, "-d", f"--profile={getcwd()}"], check=False)
 
 scheduler = AsyncIOScheduler(event_loop=bot_loop)

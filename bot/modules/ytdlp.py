@@ -1,3 +1,4 @@
+from ast import literal_eval
 from asyncio import Event, wait_for
 from functools import partial
 from time import time
@@ -343,13 +344,13 @@ class YtDlp(TaskListener):
                 if isinstance(args["-ff"], set):
                     self.ffmpeg_cmds = args["-ff"]
                 else:
-                    self.ffmpeg_cmds = eval(args["-ff"])
+                    self.ffmpeg_cmds = literal_eval(args["-ff"])
         except Exception as e:
             self.ffmpeg_cmds = None
             LOGGER.error(e)
 
         try:
-            opt = eval(args["-opt"]) if args["-opt"] else {}
+            opt = literal_eval(args["-opt"]) if args["-opt"] else {}
         except Exception as e:
             LOGGER.error(e)
             opt = {}

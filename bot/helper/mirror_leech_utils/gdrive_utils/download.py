@@ -1,6 +1,7 @@
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
 from io import FileIO
+import json
 from logging import getLogger
 from os import makedirs, path as ospath
 from tenacity import (
@@ -134,7 +135,7 @@ class GoogleDriveDownload(GoogleDriveHelper):
                     continue
                 if err.resp.get("content-type", "").startswith("application/json"):
                     reason = (
-                        eval(err.content).get("error").get("errors")[0].get("reason")
+                        json.loads(err.content).get("error").get("errors")[0].get("reason")
                     )
                     if "fileNotDownloadable" in reason and "document" in mime_type:
                         return self._download_file(

@@ -19,3 +19,4 @@ downloads/*
 __pycache__/
 *.pyc
 startup.log
+bin/

@@ -4,9 +4,13 @@ from uvloop import install
 
 install()
 
+import os
 import shutil
-from subprocess import run as srun
 from os import getcwd
+
+os.environ["PATH"] = os.path.join(getcwd(), "bin") + os.path.pathsep + os.environ["PATH"]
+
+from subprocess import run as srun
 from asyncio import Lock, new_event_loop, set_event_loop
 from logging import (
     ERROR,

@@ -42,6 +42,12 @@ class DirectListener:
                 self._a2c_opt["dir"] = self._path
             filename = content["filename"]
             self._a2c_opt["out"] = filename
+            if not TorrentManager.aria2:
+                await TorrentManager.initiate()
+            if not TorrentManager.aria2:
+                self._failed += 1
+                LOGGER.error(f"Unable to download {filename} due to: Aria2 is not initialized!")
+                continue
             try:
                 gid = await TorrentManager.aria2.addUri(
                     uris=[content["url"]], options=self._a2c_opt, position=0

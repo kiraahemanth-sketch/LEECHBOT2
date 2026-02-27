@@ -38,6 +38,13 @@ async def add_aria2_download(listener, dpath, header, ratio, seed_time):
         else:
             a2c_opt["pause"] = "true"
 
+    if not TorrentManager.aria2:
+        await TorrentManager.initiate()
+
+    if not TorrentManager.aria2:
+        await listener.on_download_error("Aria2 is not initialized! Please check your configuration.")
+        return
+
     try:
         if await aiopath.exists(listener.link):
             async with aiopen(listener.link, "rb") as tf:

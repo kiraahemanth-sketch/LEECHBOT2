@@ -7,6 +7,7 @@ from aioaria2 import Aria2WebsocketClient
 from aiohttp import ClientError
 from aioqbt.client import create_client
 from tenacity import (
+    AsyncRetrying,
     retry,
     retry_if_exception_type,
     stop_after_attempt,
@@ -42,23 +43,30 @@ class TorrentManager:
 
     @classmethod
     async def initiate(cls):
-        if cls.aria2:
-            return
-        try:
-            cls.aria2 = await Aria2WebsocketClient.new("http://localhost:6800/jsonrpc")
-            LOGGER.info("Aria2 initialized successfully.")
+        if not cls.aria2:
+            try:
+                async for attempt in AsyncRetrying(
+                    stop=stop_after_attempt(5),
+                    wait=wait_exponential(multiplier=1, min=1, max=5),
+                    retry=retry_if_exception_type(
+                        (ClientError, TimeoutError, ConnectionRefusedError)
+                    ),
+                ):
+                    with attempt:
+                        cls.aria2 = await Aria2WebsocketClient.new(
+                            "http://localhost:6800/jsonrpc"
+                        )
+                LOGGER.info("Aria2 initialized successfully.")
+            except Exception as e:
+                LOGGER.error(f"Error during Aria2 initialization: {e}")
 
-            if Config.DISABLE_TORRENTS:
-                LOGGER.info("Torrents are disabled.")
-                return
-
-            cls.qbittorrent = await create_client("http://localhost:8090/api/v2/")
-            cls.qbittorrent = wrap_with_retry(cls.qbittorrent)
-
-        except Exception as e:
-            LOGGER.error(f"Error during initialization: {e}")
-            await cls.close_all()
-            raise
+        if not cls.qbittorrent and not Config.DISABLE_TORRENTS:
+            try:
+                cls.qbittorrent = await create_client("http://localhost:8090/api/v2/")
+                cls.qbittorrent = wrap_with_retry(cls.qbittorrent)
+                LOGGER.info("qBittorrent initialized successfully.")
+            except Exception as e:
+                LOGGER.error(f"Error during qBittorrent initialization: {e}")
 
     @classmethod
     async def close_all(cls):

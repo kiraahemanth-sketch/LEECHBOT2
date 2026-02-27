@@ -148,6 +148,8 @@ class TaskConfig:
         self.ffmpeg_cmds = None
         self.metadata_title = None
         self.chat_thread_id = None
+        self._ftool_event = None
+        self._ftool_choice = None
         self.subproc = None
         self.thumb = None
         self.excluded_extensions = []

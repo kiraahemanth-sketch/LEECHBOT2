@@ -21,6 +21,7 @@ from .mirror_leech import (
     jd_mirror,
     nzb_leech,
     nzb_mirror,
+    ftool_callback,
 )
 from .restart import (
     restart_bot,
@@ -73,6 +74,7 @@ __all__ = [
     "jd_mirror",
     "nzb_leech",
     "nzb_mirror",
+    "ftool_callback",
     "restart_bot",
     "restart_notification",
     "confirm_restart",

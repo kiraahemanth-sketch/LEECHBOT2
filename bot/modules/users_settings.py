@@ -1469,6 +1469,8 @@ async def edit_user_settings(client, query):
                 fpath = rclone_conf
             elif data[3] == "USER_COOKIE_FILE":
                 fpath = yt_cookie_path
+            elif data[3] == "WATERMARK_FILE":
+                fpath = f"watermarks/{user_id}.png"
             else:
                 fpath = token_pickle
             if await aiopath.exists(fpath):

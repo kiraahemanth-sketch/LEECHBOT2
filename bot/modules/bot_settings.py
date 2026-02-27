@@ -363,9 +363,11 @@ async def edit_variable(_, message, pre_message, key):
     elif value.isdigit():
         value = int(value)
     elif value.startswith("[") and value.endswith("]"):
-        value = eval(value)
+        from ast import literal_eval
+        value = literal_eval(value)
     elif value.startswith("{") and value.endswith("}"):
-        value = eval(value)
+        from ast import literal_eval
+        value = literal_eval(value)
     Config.set(key, value)
     await update_buttons(pre_message, "var")
     await delete_message(message)
@@ -433,7 +435,8 @@ async def edit_nzb(_, message, pre_message, key):
         value = int(value)
     elif value.startswith("[") and value.endswith("]"):
         try:
-            value = ",".join(eval(value))
+            from ast import literal_eval
+            value = ",".join(literal_eval(value))
         except Exception as e:
             LOGGER.error(e)
             await update_buttons(pre_message, "nzb")
@@ -452,7 +455,8 @@ async def edit_nzb_server(_, message, pre_message, key, index=0):
     if key == "newser":
         if value.startswith("{") and value.endswith("}"):
             try:
-                value = eval(value)
+                from ast import literal_eval
+                value = literal_eval(value)
             except Exception:
                 await send_message(message, "Invalid dict format!")
                 await update_buttons(pre_message, "nzbserver")

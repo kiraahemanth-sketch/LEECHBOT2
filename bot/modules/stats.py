@@ -71,13 +71,13 @@ async def get_stats(event, key="home"):
         btns.data_button("Pkgs Stats", f"stats {user_id} stpkgs")
         btns.data_button("Task Limits", f"stats {user_id} tlimits")
         btns.data_button("Sys Tasks", f"stats {user_id} systasks")
-        msg = "⌬ <b><i>Bot & OS Statistics!</i></b>"
+        msg = "⚡ <b><i>Bot & OS Statistics!</i></b>"
     elif key == "stbot":
         total, used, free, disk = disk_usage("/")
         swap = swap_memory()
         memory = virtual_memory()
         disk_io = disk_io_counters()
-        msg = f"""⌬ <b><i>BOT STATISTICS :</i></b>
+        msg = f"""⚡ <b><i>BOT STATISTICS :</i></b>
 ┖ <b>Bot Uptime :</b> {get_readable_time(time() - bot_start_time)}
 
 ┎ <b><i>RAM ( MEMORY ) :</i></b>
@@ -96,12 +96,12 @@ async def get_stats(event, key="home"):
 """
     elif key == "stsys":
         cpu_usage = cpu_percent(interval=0.5)
-        msg = f"""⌬ <b><i>OS SYSTEM :</i></b>
+        msg = f"""⚡ <b><i>OS SYSTEM :</i></b>
 ┟ <b>OS Uptime :</b> {get_readable_time(time() - boot_time())}
 ┠ <b>OS Version :</b> {version()}
 ┖ <b>OS Arch :</b> {platform()}
 
-⌬ <b><i>NETWORK STATS :</i></b>
+⚡ <b><i>NETWORK STATS :</i></b>
 ┟ <b>Upload Data:</b> {get_readable_file_size(net_io_counters().bytes_sent)}
 ┠ <b>Download Data:</b> {get_readable_file_size(net_io_counters().bytes_recv)}
 ┠ <b>Pkts Sent:</b> {str(net_io_counters().packets_sent)[:-3]}k
@@ -132,22 +132,22 @@ async def get_stats(event, key="home"):
             )[0]
         official_v = (
             await cmd_exec(
-                f"curl -o latestversion.py https://raw.githubusercontent.com/SilentDemonSD/WZML-X/{Config.UPSTREAM_BRANCH}/bot/version.py -s && python3 latestversion.py && rm latestversion.py",
+                f"curl -o latestversion.py https://raw.githubusercontent.com/kiraahemanth-sketch/LEECHBOT2/{Config.UPSTREAM_BRANCH}/bot/version.py -s && python3 latestversion.py && rm latestversion.py",
                 True,
             )
         )[0]
-        msg = f"""⌬ <b><i>Repo Statistics :</i></b>
+        msg = f"""⚡ <b><i>Repo Statistics :</i></b>
 │
 ┟ <b>Bot Updated :</b> {last_commit}
 ┠ <b>Current Version :</b> {get_version()}
 ┠ <b>Latest Version :</b> {official_v}
 ┖ <b>Last ChangeLog :</b> {changelog}
 
-⌬ <b>REMARKS :</b> <code>{compare_versions(get_version(), official_v)}</code>
+⚡ <b>REMARKS :</b> <code>{compare_versions(get_version(), official_v)}</code>
     """
     elif key == "stpkgs":
         ver = bot_cache.get("eng_versions", {})
-        msg = f"""⌬ <b><i>Packages Statistics :</i></b>
+        msg = f"""⚡ <b><i>Packages Statistics :</i></b>
 │
 ┟ <b>python:</b> {ver.get("python", "N/A")}
 ┠ <b>aria2:</b> {ver.get("aria2", "N/A")}
@@ -163,7 +163,7 @@ async def get_stats(event, key="home"):
 ┖ <b>Mega CMD:</b> {ver.get("mega", "N/A")}
 """
     elif key == "tlimits":
-        msg = f"""⌬ <b><i>Bot Task Limits :</i></b>
+        msg = f"""⚡ <b><i>Bot Task Limits :</i></b>
 │
 ┟ <b>Direct Limit :</b> {Config.DIRECT_LIMIT or "∞"} GB
 ┠ <b>Torrent Limit :</b> {Config.TORRENT_LIMIT or "∞"} GB
@@ -209,7 +209,7 @@ async def get_stats(event, key="home"):
         except Exception:
             processes = []
 
-        msg = "⌬ <b><i>System Tasks (High Usage)</i></b>\n│\n"
+        msg = "⚡ <b><i>System Tasks (High Usage)</i></b>\n│\n"
 
         if processes:
             for i, proc in enumerate(processes, 1):

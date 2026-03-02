@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial, wraps
 
 from httpx import AsyncClient
+from os import cpu_count
 
 from ... import bot_loop, user_data
 from ...core.config_manager import Config
@@ -22,7 +23,7 @@ from .telegraph_helper import telegraph
 
 COMMAND_USAGE = {}
 
-THREAD_POOL = ThreadPoolExecutor(max_workers=500)
+THREAD_POOL = ThreadPoolExecutor(max_workers=(cpu_count() or 4) * 5)
 
 
 class SetInterval:
@@ -116,7 +117,7 @@ async def get_telegraph_list(telegraph_content):
     path = [
         (
             await telegraph.create_page(
-                title="Mirror-Leech-Bot Drive Search", content=content
+                title="⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Drive Search", content=content
             )
         )["path"]
         for content in telegraph_content
@@ -155,6 +156,7 @@ def arg_parser(items, arg_base):
         "-ut",
         "-bt",
         "-yt",
+        "-ft",
     }
     if Config.DISABLE_BULK and "-b" in items:
         arg_base["-b"] = False
@@ -189,6 +191,7 @@ def arg_parser(items, arg_base):
                     "-ut",
                     "-bt",
                     "-yt",
+                    "-ft",
                 ]
             ):
                 arg_base[part] = True

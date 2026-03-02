@@ -16,7 +16,7 @@ from logging import (
     basicConfig,
     getLogger,
 )
-from os import cpu_count
+from os import cpu_count, path as ospath
 from time import time
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -48,11 +48,11 @@ basicConfig(
 
 LOGGER = getLogger(__name__)
 cpu_no = cpu_count()
-threads = max(1, cpu_no // 2)
-cores = ",".join(str(i) for i in range(threads))
+threads = max(1, cpu_no)
+cores = ",".join(str(i) for i in range(max(1, cpu_no // 2)))
 
 bot_cache = {}
-DOWNLOAD_DIR = "/usr/src/app/downloads/"
+DOWNLOAD_DIR = ospath.join(getcwd(), "downloads/")
 intervals = {"status": {}, "qb": "", "jd": "", "nzb": "", "stopAll": False}
 qb_torrents = {}
 jd_downloads = {}

@@ -17,7 +17,10 @@ class SevenZStatus:
         self._gid = gid
         self._start_time = time()
         self._cstatus = status
-        self.engine = EngineStatus().STATUS_7Z
+        if status == "Extract":
+            self.engine = "pExtract v2"
+        else:
+            self.engine = EngineStatus().STATUS_7Z
 
     def gid(self):
         return self._gid

@@ -24,7 +24,7 @@ class DbManager:
             self._conn = AsyncIOMotorClient(
                 Config.DATABASE_URL, server_api=ServerApi("1")
             )
-            self.db = self._conn.wzmlx
+            self.db = self._conn.hemanth
             self._return = False
         except PyMongoError as e:
             LOGGER.error(f"Error in DB connection: {e}")
@@ -110,7 +110,7 @@ class DbManager:
             return
         data = user_data.get(user_id, {})
         data = data.copy()
-        for key in ("THUMBNAIL", "RCLONE_CONFIG", "TOKEN_PICKLE", "USER_COOKIE_FILE"):
+        for key in ("THUMBNAIL", "RCLONE_CONFIG", "TOKEN_PICKLE", "USER_COOKIE_FILE", "WATERMARK_FILE"):
             data.pop(key, None)
         pipeline = [
             {
@@ -131,6 +131,7 @@ class DbManager:
                                                     "RCLONE_CONFIG",
                                                     "TOKEN_PICKLE",
                                                     "USER_COOKIE_FILE",
+                                                    "WATERMARK_FILE",
                                                 ],
                                             ]
                                         },

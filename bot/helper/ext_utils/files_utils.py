@@ -275,7 +275,7 @@ async def join_files(opath):
 
 
 async def split_file(f_path, split_size, listener):
-    out_path = f"{f_path}."
+    out_path = f"{f_path}.part"
     if listener.is_cancelled:
         return False
     listener.subproc = await create_subprocess_exec(

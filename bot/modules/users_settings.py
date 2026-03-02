@@ -10,7 +10,7 @@ from aiofiles.os import makedirs, remove
 from aiofiles.os import path as aiopath
 from langcodes import Language
 from pyrogram.filters import create
-from pyrogram.handlers import MessageHandler
+from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 
 from bot.helper.ext_utils.status_utils import get_readable_file_size
 
@@ -65,6 +65,19 @@ advanced_options = [
     "YT_DLP_OPTIONS",
     "UPLOAD_PATHS",
     "USER_COOKIE_FILE",
+]
+
+ff_tools_options = [
+    "VIDEO_MERGE",
+    "VIDEO_AUDIO_MERGE",
+    "VIDEO_SUBTITLE_MERGE",
+    "STREAM_EXTRACT",
+    "STREAM_SWAP",
+    "STREAM_REMOVE",
+    "WATERMARK",
+    "VIDEO_ENCODE",
+    "WATERMARK_FILE",
+    "KEEP_SOURCE_FILES",
 ]
 yt_options = ["YT_DESP", "YT_TAGS", "YT_CATEGORY_ID", "YT_PRIVACY_STATUS"]
 
@@ -153,7 +166,7 @@ user_settings_text = {
         "",
         "",
         """<i>Send your Name Swap. You can add pattern instead of normal text according to the format.</i>
-<b>Full Documentation Guide</b> <a href="https://t.me/WZML_X/77">Click Here</a>
+<b>Full Documentation Guide</b> <a href="https://t.me/ALONEKINGSTAR77/77">Click Here</a>
 ┖ <b>Time Left :</b> <code>60 sec</code>
 """,
     ),
@@ -186,8 +199,8 @@ Here I will explain how to use mltb.* which is reference to files you want to wo
     "METADATA_CMDS": (
         "",
         "",
-        """<i>Send your Meta data. You can according to the format title="Join @WZML_X".</i>
-<b>Full Documentation Guide</b> <a href="https://t.me/WZML_X/">Click Here</a>
+        """<i>Send your Meta data. You can according to the format title="Join @HEMANTH".</i>
+<b>Full Documentation Guide</b> <a href="https://t.me/ALONEKINGSTAR77/">Click Here</a>
 ┖ <b>Time Left :</b> <code>60 sec</code>
 """,
     ),
@@ -287,6 +300,16 @@ Here I will explain how to use mltb.* which is reference to files you want to wo
         "PixelDrain API Key",
         "<i>Send your PixelDrain API Key.</i> \n┖ <b>Time Left :</b> <code>60 sec</code>",
     ),
+    "AUTO_MERGE": (
+        "True or False",
+        "Auto Merge multiple video parts after extraction.",
+        "Toggle Auto Merge on or off.",
+    ),
+    "WATERMARK_FILE": (
+        "Photo or Doc",
+        "Custom Watermark is used to overlay an image on your videos.",
+        "<i>Send a transparent PNG photo to save it as custom watermark.</i> \n┖ <b>Time Left :</b> <code>60 sec</code>",
+    ),
 }
 
 
@@ -300,14 +323,15 @@ async def get_user_settings(from_user, stype="main"):
 
     if stype == "main":
         buttons.data_button(
-            "General Settings", f"userset {user_id} general", position="header"
+            "General Settings", f"userset {user_id} general", position="header", emoji=5440389890787281213
         )
-        buttons.data_button("Mirror Settings", f"userset {user_id} mirror")
-        buttons.data_button("Leech Settings", f"userset {user_id} leech")
-        buttons.data_button("Uphoster Settings", f"userset {user_id} uphoster")
-        buttons.data_button("FF Media Settings", f"userset {user_id} ffset")
+        buttons.data_button("Mirror Settings", f"userset {user_id} mirror", emoji=5355142851615283756)
+        buttons.data_button("Leech Settings", f"userset {user_id} leech", emoji=5355142851615283756)
+        buttons.data_button("Uphoster Settings", f"userset {user_id} uphoster", emoji=5355142851615283756)
+        buttons.data_button("FF Media Settings", f"userset {user_id} ffset", emoji=5355142851615283756)
+        buttons.data_button("FF Tools", f"userset {user_id} fftools", emoji=5355142851615283756)
         buttons.data_button(
-            "Mics Settings", f"userset {user_id} advanced", position="l_body"
+            "Mics Settings", f"userset {user_id} advanced", position="l_body", emoji=5440389890787281213
         )
 
         if user_dict and any(
@@ -329,13 +353,13 @@ async def get_user_settings(from_user, stype="main"):
             )
         buttons.data_button("Close", f"userset {user_id} close", position="footer")
 
-        text = f"""⌬ <b>User Settings :</b>
-│
-┟ <b>Name</b> → {user_name}
-┠ <b>UserID</b> → #ID{user_id}
-┠ <b>Username</b> → @{from_user.username}
-┠ <b>Telegram DC</b> → {from_user.dc_id}
-┖ <b>Telegram Lang</b> → {Language.get(lc).display_name() if (lc := from_user.language_code) else "N/A"}"""
+        text = f"""👤 <b><u>Account Overview</u></b>
+┃
+┟ <b>Name:</b> {user_name}
+┠ <b>User ID:</b> <code>{user_id}</code>
+┠ <b>Username:</b> @{from_user.username}
+┠ <b>Data Center:</b> <code>{from_user.dc_id}</code>
+┖ <b>Language:</b> <code>{Language.get(lc).display_name() if (lc := from_user.language_code) else "N/A"}</code>"""
 
         btns = buttons.build_menu(2)
 
@@ -358,8 +382,8 @@ async def get_user_settings(from_user, stype="main"):
             f"userset {user_id} tog USER_TOKENS {'f' if user_tokens else 't'}",
         )
 
-        buttons.data_button("Back", f"userset {user_id} back", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
 
         def_cookies = user_dict.get("USE_DEFAULT_COOKIE", False)
         cookie_mode = "Owner's Cookie" if def_cookies else "User's Cookie"
@@ -369,7 +393,7 @@ async def get_user_settings(from_user, stype="main"):
         )
         btns = buttons.build_menu(1)
 
-        text = f"""⌬ <b>General Settings :</b>
+        text = f"""⚡ <b>General Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Default Upload Package</b> → <b>{du}</b>
@@ -506,25 +530,32 @@ async def get_user_settings(from_user, stype="main"):
         else:
             thumb_layout = "None"
 
-        buttons.data_button("Back", f"userset {user_id} back", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        if user_dict.get("AUTO_MERGE", False):
+            buttons.data_button("Disable Auto Merge", f"userset {user_id} tog AUTO_MERGE f")
+            auto_merge = "Enabled"
+        else:
+            buttons.data_button("Enable Auto Merge", f"userset {user_id} tog AUTO_MERGE t")
+            auto_merge = "Disabled"
+
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(2)
 
-        text = f"""⌬ <b>Leech Settings :</b>
-┟ <b>Name</b> → {user_name}
+        text = f"""📤 <b><u>Leech Configuration</u></b>
 ┃
-┠ Leech Type → <b>{ltype}</b>
-┠ Custom Thumbnail → <b>{thumbmsg}</b>
-┠ Leech Split Size → <b>{get_readable_file_size(split_size)}</b>
-┠ Equal Splits → <b>{equal_splits}</b>
-┠ Media Group → <b>{media_group}</b>
-┠ Leech Prefix → <code>{escape(lprefix)}</code>
-┠ Leech Suffix → <code>{escape(lsuffix)}</code>
-┠ Leech Caption → <code>{escape(lcap)}</code>
-┠ Leech Destination → <code>{leech_dest}</code>
-┠ Leech by <b>{leech_method}</b> session
-┠ Mixed Leech → <b>{hybrid_leech}</b>
-┖ Thumbnail Layout → <b>{thumb_layout}</b>
+┟ <b>Leech Type:</b> <code>{ltype}</code>
+┠ <b>Thumbnail:</b> <code>{thumbmsg}</code>
+┠ <b>Split Size:</b> <code>{get_readable_file_size(split_size)}</code>
+┠ <b>Equal Splits:</b> <code>{equal_splits}</code>
+┠ <b>Media Group:</b> <code>{media_group}</code>
+┠ <b>Prefix:</b> <code>{escape(lprefix)}</code>
+┠ <b>Suffix:</b> <code>{escape(lsuffix)}</code>
+┠ <b>Caption:</b> <code>{escape(lcap)}</code>
+┠ <b>Dump Chat:</b> <code>{leech_dest}</code>
+┠ <b>Leech By:</b> <code>{leech_method.capitalize()} session</code>
+┠ <b>Mixed Leech:</b> <code>{hybrid_leech}</code>
+┠ <b>Thumb Layout:</b> <code>{thumb_layout}</code>
+┖ <b>Auto Merge:</b> <code>{auto_merge}</code>
 """
 
     elif stype == "uphoster":
@@ -536,12 +567,12 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("Gofile Tools", f"userset {user_id} gofile")
         buttons.data_button("BuzzHeavier Tools", f"userset {user_id} buzzheavier")
         buttons.data_button("PixelDrain Tools", f"userset {user_id} pixeldrain")
-        buttons.data_button("Back", f"userset {user_id} back", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
         destinations = [s.capitalize() for s in uphoster_service.split(",")]
-        text = f"""⌬ <b>Uphoster Settings :</b>
+        text = f"""⚡ <b>Uphoster Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┖ <b>Current Destination</b> → {', '.join(destinations)}"""
@@ -549,7 +580,7 @@ async def get_user_settings(from_user, stype="main"):
     elif stype == "pixeldrain":
         buttons.data_button("PixelDrain Key", f"userset {user_id} menu PIXELDRAIN_KEY")
         buttons.data_button("Back", f"userset {user_id} back uphoster", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
         if user_dict.get("PIXELDRAIN_KEY", False):
@@ -559,7 +590,7 @@ async def get_user_settings(from_user, stype="main"):
         else:
             pdtoken = "None"
 
-        text = f"""⌬ <b>PixelDrain Settings :</b>
+        text = f"""⚡ <b>PixelDrain Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┖ <b>PixelDrain Key</b> → <code>{pdtoken}</code>"""
@@ -572,7 +603,7 @@ async def get_user_settings(from_user, stype="main"):
             "BuzzHeavier Folder ID", f"userset {user_id} menu BUZZHEAVIER_FOLDER_ID"
         )
         buttons.data_button("Back", f"userset {user_id} back uphoster", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
         if user_dict.get("BUZZHEAVIER_TOKEN", False):
@@ -587,7 +618,7 @@ async def get_user_settings(from_user, stype="main"):
         else:
             bzfolder = "None"
 
-        text = f"""⌬ <b>BuzzHeavier Settings :</b>
+        text = f"""⚡ <b>BuzzHeavier Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>BuzzHeavier Token</b> → <code>{bztoken}</code>
@@ -599,7 +630,7 @@ async def get_user_settings(from_user, stype="main"):
             "Gofile Folder ID", f"userset {user_id} menu GOFILE_FOLDER_ID"
         )
         buttons.data_button("Back", f"userset {user_id} back uphoster", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
         if user_dict.get("GOFILE_TOKEN", False):
@@ -616,7 +647,7 @@ async def get_user_settings(from_user, stype="main"):
         else:
             gffolder = "None (Uploads to Root)"
 
-        text = f"""⌬ <b>Gofile Settings :</b>
+        text = f"""⚡ <b>Gofile Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Gofile Token</b> → <code>{gftoken}</code>
@@ -630,7 +661,7 @@ async def get_user_settings(from_user, stype="main"):
         buttons.data_button("Rclone Flags", f"userset {user_id} menu RCLONE_FLAGS")
 
         buttons.data_button("Back", f"userset {user_id} back mirror", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
 
         rccmsg = "Exists" if await aiopath.exists(rclone_conf) else "Not Exists"
         if user_dict.get("RCLONE_PATH", False):
@@ -648,7 +679,7 @@ async def get_user_settings(from_user, stype="main"):
         else:
             rcflags = "None"
 
-        text = f"""⌬ <b>RClone Settings :</b>
+        text = f"""⚡ <b>RClone Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Rclone Config</b> → <b>{rccmsg}</b>
@@ -676,7 +707,7 @@ async def get_user_settings(from_user, stype="main"):
             )
             sd_msg = "Disabled"
         buttons.data_button("Back", f"userset {user_id} back mirror", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
 
         tokenmsg = "Exists" if await aiopath.exists(token_pickle) else "Not Exists"
         if user_dict.get("GDRIVE_ID", False):
@@ -688,7 +719,7 @@ async def get_user_settings(from_user, stype="main"):
         index = user_dict["INDEX_URL"] if user_dict.get("INDEX_URL", False) else "None"
         btns = buttons.build_menu(2)
 
-        text = f"""⌬ <b>GDrive Tools Settings :</b>
+        text = f"""⚡ <b>GDrive Tools Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Gdrive Token</b> → <b>{tokenmsg}</b>
@@ -725,11 +756,11 @@ async def get_user_settings(from_user, stype="main"):
             sd_msg = "Disabled"
 
         buttons.data_button("YT Up Tools", f"userset {user_id} yttools")
-        buttons.data_button("Back", f"userset {user_id} back", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
-        text = f"""⌬ <b>Mirror Settings :</b>
+        text = f"""⚡ <b>Mirror Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Rclone Config</b> → <b>{rccmsg}</b>
@@ -801,19 +832,60 @@ async def get_user_settings(from_user, stype="main"):
             )
             display_subtitle_meta = f"<code>{display_subtitle_meta}</code>"
 
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
+        btns = buttons.build_menu(2)
+
+        text = f"""⚙️ <b><u>FFmpeg & Metadata</u></b>
+┃
+┟ <b>CLI Commands:</b> {ffc}
+┃
+┠ <b>Global Metadata:</b> {display_meta_val}
+┠ <b>Audio Tracks:</b> {display_audio_meta}
+┠ <b>Video Tracks:</b> {display_video_meta}
+┖ <b>Subtitles:</b> {display_subtitle_meta}"""
+
+    elif stype == "fftools":
+        buttons.data_button("FFmpeg Cmds", f"userset {user_id} menu FFMPEG_CMDS")
+        buttons.data_button("Mega-MetaData", f"userset {user_id} menu METADATA")
+
+        vm = "Enabled" if user_dict.get("VIDEO_MERGE", False) else "Disabled"
+        buttons.data_button(f"Video+Video", f"userset {user_id} tog VIDEO_MERGE {'f' if vm == 'Enabled' else 't'}")
+
+        vam = "Enabled" if user_dict.get("VIDEO_AUDIO_MERGE", False) else "Disabled"
+        buttons.data_button(f"Video+Audio", f"userset {user_id} tog VIDEO_AUDIO_MERGE {'f' if vam == 'Enabled' else 't'}")
+
+        vsm = "Enabled" if user_dict.get("VIDEO_SUBTITLE_MERGE", False) else "Disabled"
+        buttons.data_button(f"Video+Subtitle", f"userset {user_id} tog VIDEO_SUBTITLE_MERGE {'f' if vsm == 'Enabled' else 't'}")
+
+        se = "Enabled" if user_dict.get("STREAM_EXTRACT", False) else "Disabled"
+        buttons.data_button(f"Stream Extract", f"userset {user_id} tog STREAM_EXTRACT {'f' if se == 'Enabled' else 't'}")
+
+        ss = "Enabled" if user_dict.get("STREAM_SWAP", False) else "Disabled"
+        buttons.data_button(f"Stream Swap", f"userset {user_id} tog STREAM_SWAP {'f' if ss == 'Enabled' else 't'}")
+
+        sr = "Enabled" if user_dict.get("STREAM_REMOVE", False) else "Disabled"
+        buttons.data_button(f"Stream Remove", f"userset {user_id} tog STREAM_REMOVE {'f' if sr == 'Enabled' else 't'}")
+
+        ksf = "Enabled" if user_dict.get("KEEP_SOURCE_FILES", False) else "Disabled"
+        buttons.data_button(f"Keep Source Files", f"userset {user_id} tog KEEP_SOURCE_FILES {'f' if ksf == 'Enabled' else 't'}", position="l_body")
+
         buttons.data_button("Back", f"userset {user_id} back", "footer")
         buttons.data_button("Close", f"userset {user_id} close", "footer")
         btns = buttons.build_menu(2)
 
-        text = f"""⌬ <b>FF Settings :</b>
-┟ <b>Name</b> → {user_name}
-┃
-┠ <b>FFmpeg CLI Commands</b> → {ffc}
-┃
-┠ <b>Default Metadata</b> → {display_meta_val}
-┠ <b>Audio Metadata</b> → {display_audio_meta}
-┠ <b>Video Metadata</b> → {display_video_meta}
-┖ <b>Subtitle Metadata</b> → {display_subtitle_meta}"""
+        text = f"""⚡ <b>FF Settings :</b>
+┌<b>Name</b> » {from_user.first_name}
+│
+├ <b>FFmpeg Commands</b> » {'Exists' if user_dict.get('FFMPEG_CMDS') else 'Not Exists'}
+├ <b>Metadata Settings</b> » {'Exists' if user_dict.get('METADATA') else 'Not Exists'}
+├ <b>Video Merge</b> » {vm}
+├ <b>Video+Audio Merge</b> » {vam}
+├ <b>Video+Subtitle Merge</b> » {vsm}
+├ <b>Stream Extract</b> » {se}
+├ <b>Stream Swap</b> » {ss}
+├ <b>Stream Remove</b> » {sr}
+└ <b>Keep Source Files</b> » {ksf}"""
 
     elif stype == "advanced":
         buttons.data_button(
@@ -859,11 +931,11 @@ async def get_user_settings(from_user, stype="main"):
             "YT Cookie File", f"userset {user_id} menu USER_COOKIE_FILE"
         )
 
-        buttons.data_button("Back", f"userset {user_id} back", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Back", f"userset {user_id} back", "footer", emoji=5355142851615283756)
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(1)
 
-        text = f"""⌬ <b>Advanced Settings :</b>
+        text = f"""⚡ <b>Advanced Settings :</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>Name Swaps</b> → {ns_msg}
@@ -909,10 +981,10 @@ async def get_user_settings(from_user, stype="main"):
         )
 
         buttons.data_button("Back", f"userset {user_id} back mirror", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         btns = buttons.build_menu(2)
 
-        text = f"""⌬ <b>YouTube Tools Settings:</b>
+        text = f"""⚡ <b>YouTube Tools Settings:</b>
 ┟ <b>Name</b> → {user_name}
 ┃
 ┠ <b>YT Description</b> → <code>{escape(str(yt_desp_val))}</code>
@@ -958,6 +1030,11 @@ async def add_file(_, message, ftype, rfunc):
         await makedirs(cpath, exist_ok=True)
         des_dir = f"{cpath}/cookies.txt"
         await message.download(file_name=des_dir)
+    elif ftype == "WATERMARK_FILE":
+        wpath = f"{getcwd()}/watermarks/"
+        await makedirs(wpath, exist_ok=True)
+        des_dir = f"{wpath}{user_id}.png"
+        await message.download(file_name=des_dir)
     await delete_message(message)
     update_user_ldata(user_id, ftype, des_dir)
     await rfunc()
@@ -972,7 +1049,8 @@ async def add_one(_, message, option, rfunc):
     value = message.text
     if value.startswith("{") and value.endswith("}"):
         try:
-            value = eval(value)
+            from ast import literal_eval
+            value = literal_eval(value)
             if user_dict[option]:
                 user_dict[option].update(value)
             else:
@@ -1084,7 +1162,8 @@ async def set_option(_, message, option, rfunc):
     elif option in ["UPLOAD_PATHS", "FFMPEG_CMDS", "YT_DLP_OPTIONS"]:
         if value.startswith("{") and value.endswith("}"):
             try:
-                value = eval(sub(r"\s+", " ", value))
+                from ast import literal_eval
+                value = literal_eval(sub(r"\s+", " ", value))
             except Exception as e:
                 await send_message(message, str(e))
                 return
@@ -1106,10 +1185,11 @@ async def get_menu(option, message, user_id):
         "RCLONE_CONFIG": f"rclone/{user_id}.conf",
         "TOKEN_PICKLE": f"tokens/{user_id}.pickle",
         "USER_COOKIE_FILE": f"cookies/{user_id}/cookies.txt",
+        "WATERMARK_FILE": f"watermarks/{user_id}.png",
     }
 
     buttons = ButtonMaker()
-    if option in ["THUMBNAIL", "RCLONE_CONFIG", "TOKEN_PICKLE", "USER_COOKIE_FILE"]:
+    if option in ["THUMBNAIL", "RCLONE_CONFIG", "TOKEN_PICKLE", "USER_COOKIE_FILE", "WATERMARK_FILE"]:
         key = "file"
     else:
         key = "set"
@@ -1149,7 +1229,7 @@ async def get_menu(option, message, user_id):
     else:
         back_to = "back"
     buttons.data_button("Back", f"userset {user_id} {back_to}", "footer")
-    buttons.data_button("Close", f"userset {user_id} close", "footer")
+    buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
     val = user_dict.get(option)
     if option in file_dict and await aiopath.exists(file_dict[option]):
         val = "<b>Exists</b>"
@@ -1173,7 +1253,7 @@ async def get_menu(option, message, user_id):
             val = "<b>Not Exists</b>"
 
     if option == "METADATA":
-        text = f"""⌬ <b><u>Menu Settings :</u></b>
+        text = f"""⚡ <b><u>Menu Settings :</u></b>
 │
 ┟ <b>Option</b> → {option}
 ┃
@@ -1191,7 +1271,7 @@ async def get_menu(option, message, user_id):
 ┖ • <code>{{sublang}}</code> - Subtitle language
 """
     else:
-        text = f"""⌬ <b><u>Menu Settings :</u></b>
+        text = f"""⚡ <b><u>Menu Settings :</u></b>
 │
 ┟ <b>Option</b> → {option}
 ┃
@@ -1268,6 +1348,7 @@ async def edit_user_settings(client, query):
         "buzzheavier",
         "pixeldrain",
         "ffset",
+        "fftools",
         "advanced",
         "gdrive",
         "rclone",
@@ -1312,9 +1393,9 @@ async def edit_user_settings(client, query):
             )
 
         buttons.data_button("Back", f"userset {user_id} back uphoster", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
 
-        text = f"""⌬ <b>Select Uphoster Destinations :</b>"""
+        text = f"""⚡ <b>Select Uphoster Destinations :</b>"""
         await edit_message(message, text, buttons.build_menu(1))
     elif data[2] == "menu":
         await query.answer()
@@ -1326,6 +1407,8 @@ async def edit_user_settings(client, query):
             back_to = "gdrive"
         elif data[3] in ["USER_TOKENS", "USE_DEFAULT_COOKIE"]:
             back_to = "general"
+        elif data[3] in ff_tools_options:
+            back_to = "fftools"
         else:
             back_to = "leech"
         await update_user_settings(query, stype=back_to)
@@ -1336,9 +1419,9 @@ async def edit_user_settings(client, query):
         text = user_settings_text[data[3]][2]
         buttons.data_button("Stop", f"userset {user_id} menu {data[3]} stop")
         buttons.data_button("Back", f"userset {user_id} menu {data[3]}", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         prompt_title = data[3].replace("_", " ").title()
-        new_message_text = f"⌬ <b>Set {prompt_title}</b>\n\n{text}"
+        new_message_text = f"⚡ <b>Set {prompt_title}</b>\n\n{text}"
         await edit_message(message, new_message_text, buttons.build_menu(1))
         rfunc = partial(get_menu, data[3], message, user_id)
         pfunc = partial(add_file, ftype=data[3], rfunc=rfunc)
@@ -1364,7 +1447,7 @@ async def edit_user_settings(client, query):
             func = remove_one
         buttons.data_button("Stop", f"userset {user_id} menu {data[3]} stop")
         buttons.data_button("Back", f"userset {user_id} menu {data[3]}", "footer")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         await edit_message(
             message, message.text.html + "\n\n" + text, buttons.build_menu(1)
         )
@@ -1378,6 +1461,7 @@ async def edit_user_settings(client, query):
             "RCLONE_CONFIG",
             "TOKEN_PICKLE",
             "USER_COOKIE_FILE",
+    "WATERMARK_FILE",
         ]:
             if data[3] == "THUMBNAIL":
                 fpath = thumb_path
@@ -1405,7 +1489,7 @@ async def edit_user_settings(client, query):
         buttons = ButtonMaker()
         buttons.data_button("Yes", f"userset {user_id} do_reset_all yes")
         buttons.data_button("No", f"userset {user_id} do_reset_all no")
-        buttons.data_button("Close", f"userset {user_id} close", "footer")
+        buttons.data_button("Close", f"userset {user_id} close", "footer", emoji=5354968347094046619)
         text = "<i>Are you sure you want to reset all your user settings?</i>"
         await edit_message(query.message, text, buttons.build_menu(2))
     elif data[2] == "do_reset_all":
@@ -1439,6 +1523,17 @@ async def edit_user_settings(client, query):
     else:
         await query.answer()
         await delete_message(message, message.reply_to_message)
+
+
+@new_task
+async def toggle_auto_merge(_, message):
+    user_id = message.from_user.id
+    user_dict = user_data.get(user_id, {})
+    auto_merge = user_dict.get("AUTO_MERGE", False)
+    update_user_ldata(user_id, "AUTO_MERGE", not auto_merge)
+    await database.update_user_data(user_id)
+    text = f"<b>Auto Merge</b> has been {'Enabled' if not auto_merge else 'Disabled'}."
+    await send_message(message, text)
 
 
 @new_task

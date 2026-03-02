@@ -13,6 +13,7 @@ from .. import LOGGER, intervals, sabnzbd_client, scheduler
 from ..core.config_manager import Config, BinConfig
 from ..core.jdownloader_booter import jdownloader
 from ..core.tg_client import TgClient
+from pyrogram.types import LinkPreviewOptions
 from ..core.torrent_manager import TorrentManager
 from ..helper.ext_utils.bot_utils import new_task
 from ..helper.ext_utils.db_handler import database
@@ -51,19 +52,19 @@ async def restart_sessions(_, message):
 
 async def send_incomplete_task_message(cid, msg_id, msg):
     try:
-        if msg.startswith("⌬ <b><i>Restarted Successfully!</i></b>"):
+        if msg.startswith("⚡ <b><i>Restarted Successfully!</i></b>"):
             await TgClient.bot.edit_message_text(
                 chat_id=cid,
                 message_id=msg_id,
                 text=msg,
-                disable_web_page_preview=True,
+                link_preview_options=LinkPreviewOptions(is_disabled=True),
             )
             await remove(".restartmsg")
         else:
             await TgClient.bot.send_message(
                 chat_id=cid,
                 text=msg,
-                disable_web_page_preview=True,
+                link_preview_options=LinkPreviewOptions(is_disabled=True),
                 disable_notification=True,
             )
     except Exception as e:
@@ -82,7 +83,7 @@ async def restart_notification():
     if Config.INCOMPLETE_TASK_NOTIFIER and Config.DATABASE_URL:
         if notifier_dict := await database.get_incomplete_tasks():
             for cid, data in notifier_dict.items():
-                msg = f"""⌬ <b><i>{"Restarted Successfully!" if cid == chat_id else "Bot Restarted!"}</i></b>
+                msg = f"""⚡ <b><i>{"Restarted Successfully!" if cid == chat_id else "Bot Restarted!"}</i></b>
 ┟ <b>Date:</b> {now.strftime("%d/%m/%y")}
 ┠ <b>Time:</b> {now.strftime("%I:%M:%S %p")}
 ┠ <b>TimeZone:</b> Asia/Kolkata
@@ -102,7 +103,7 @@ async def restart_notification():
             await TgClient.bot.edit_message_text(
                 chat_id=chat_id,
                 message_id=msg_id,
-                text=f"""⌬ <b><i>Restarted Successfully!</i></b>
+                text=f"""⚡ <b><i>Restarted Successfully!</i></b>
 ┟ <b>Date:</b> {now.strftime("%d/%m/%y")}
 ┠ <b>Time:</b> {now.strftime("%I:%M:%S %p")}
 ┠ <b>TimeZone:</b> Asia/Kolkata

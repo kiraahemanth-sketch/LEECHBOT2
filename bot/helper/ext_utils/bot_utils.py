@@ -157,6 +157,10 @@ def arg_parser(items, arg_base):
         "-bt",
         "-yt",
         "-ft",
+        "-am",
+        "-vm",
+        "-vam",
+        "-vsm",
     }
     if Config.DISABLE_BULK and "-b" in items:
         arg_base["-b"] = False
@@ -192,6 +196,10 @@ def arg_parser(items, arg_base):
                     "-bt",
                     "-yt",
                     "-ft",
+                    "-am",
+                    "-vm",
+                    "-vam",
+                    "-vsm",
                 ]
             ):
                 arg_base[part] = True

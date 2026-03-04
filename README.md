@@ -1,12 +1,12 @@
 <p align="center">
     <a href="https://t.me/ALONEKINGSTAR77">
         <kbd>
-            <img width="250" src="https://graph.org/file/639fe4239b78e5862b302.jpg" alt="⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Logo">
+            <img width="250" src="https://graph.org/file/639fe4239b78e5862b302.jpg" alt="⚡𝗛𝗘𝗠𝗔𝗡𝗧𝐇⚡ Logo">
         </kbd>
     </a>
 </p>
 
-<h1 align="center">⚡ ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Mirror-Leech Bot ⚡</h1>
+<h1 align="center">⚡ ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝐇⚡ Mirror-Leech Bot ⚡</h1>
 
 <p align="center">
 <i>A powerful, feature-rich Mirror-Leech Telegram Bot. Optimized for VPS and production deployments.</i>
@@ -98,5 +98,5 @@ To ensure the bot auto-restarts on failure or server reboot:
 
 ## 📢 Support & Updates
 
-- **Channel**: [⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Updates](https://t.me/ALONEKINGSTAR77)
+- **Channel**: [⚡𝗛𝗘𝗠𝗔𝗡𝗧𝐇⚡ Updates](https://t.me/ALONEKINGSTAR77)
 - **Support**: [@alonekingstar77](https://t.me/ALONEKINGSTAR77)

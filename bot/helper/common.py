@@ -162,6 +162,8 @@ class TaskConfig:
         self.pm_msg = None
         self.file_details = {}
         self.mode = tuple()
+        self._ftool_event = None
+        self._ftool_choice = None
 
     def _set_mode_engine(self):
         self.source_url = (
@@ -1201,53 +1203,53 @@ class TaskConfig:
         video_files = []
         for dirpath, _, files in await sync_to_async(walk, dl_path):
             for file in files:
-                if (await get_document_type(ospath.join(dirpath, file)))[0]:
-                    video_files.append(ospath.join(dirpath, file))
+                f_path = ospath.join(dirpath, file)
+                if (await get_document_type(f_path))[0]:
+                    video_files.append(f_path)
 
         if len(video_files) <= 1:
             return dl_path
 
         video_files.sort()
 
-        # Check if they are parts
-        part_regex = r"\.part\d+(\.|$)|(\.\d{3}$)"
-        parts = [f for f in video_files if re.search(part_regex, f)]
+        # Group files by their base name to handle multiple sets of parts
+        groups = {}
+        part_regex = r"(.+?)(\.[a-z0-9]+)(\.part\d+(\.|$)|(\.\d{3}$))"
 
-        if len(parts) <= 1:
-            return dl_path
-
-        # Check if they have the same extension and base name
-        base_names = set()
-        extensions = set()
-        for f in parts:
+        for f in video_files:
             name = ospath.basename(f)
-            match = re.search(r"(\.[a-z0-9]+)(\.part\d+(\.|$)|(\.\d{3}$))", name, re.I)
-            if match:
-                ext = match.group(1)
-                base_name = name[:match.start()]
-            else:
-                ext = ospath.splitext(name)[1]
-                base_name = re.sub(part_regex, "", name)
-            extensions.add(ext)
-            base_names.add(base_name)
+            if match := re.search(part_regex, name, re.I):
+                base_name = match.group(1)
+                ext = match.group(2)
+                key = (base_name, ext, ospath.dirname(f))
+                if key not in groups:
+                    groups[key] = []
+                groups[key].append(f)
 
-        if len(extensions) > 1 or len(base_names) > 1:
-            LOGGER.info("Different formats or base names detected, skipping auto merge.")
+        if not groups:
             return dl_path
 
         ffmpeg = FFMpeg(self)
-        async with task_dict_lock:
-            from .mirror_leech_utils.status_utils.ffmpeg_status import FFmpegStatus
-            task_dict[self.mid] = FFmpegStatus(self, ffmpeg, gid, "Merge")
+        for (base, ext, fdir), parts in groups.items():
+            if len(parts) <= 1:
+                continue
 
-        LOGGER.info(f"Merging parts for: {list(base_names)[0]}")
-        res = await ffmpeg.merge(parts, list(base_names)[0] + list(extensions)[0])
-        if res:
-            if not self.keep_source_files:
-                for f in parts:
-                    with suppress(Exception):
-                        await remove(f)
-            return res
+            async with task_dict_lock:
+                from .mirror_leech_utils.status_utils.ffmpeg_status import FFmpegStatus
+                task_dict[self.mid] = FFmpegStatus(self, ffmpeg, gid, "Merge")
+
+            output_name = f"{base}{ext}"
+            LOGGER.info(f"Merging parts: {output_name} in {fdir}")
+            res = await ffmpeg.merge(parts, output_name)
+            if res:
+                if not self.keep_source_files:
+                    for f in parts:
+                        with suppress(Exception):
+                            await remove(f)
+                # Update dl_path if it was a direct file merge, but usually it's a folder
+                if dl_path in parts:
+                    dl_path = res
+
         return dl_path
 
     async def proceed_video_merge(self, dl_path, gid):

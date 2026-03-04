@@ -67,6 +67,7 @@ from ..telegram_helper.message_utils import (
     delete_message,
     delete_status,
     send_message,
+    send_file,
     update_status_message,
 )
 
@@ -709,7 +710,8 @@ class TaskListener(TaskConfig):
         if self._ftool_choice == "ssgrid":
             res = await ffmpeg.generate_screenshot_grid(dl_path, f"{self.name}_grid.png")
             if res:
-                pdf = await ffmpeg.convert_to_pdf(res, f"{self.name}_grid.pdf")
+                pdf_path = f"{self.name}_grid.pdf"
+                pdf = await ffmpeg.convert_to_pdf(res, pdf_path)
                 await gather(
                     send_file(self.message, res, f"Screenshot Grid for {self.name}"),
                     send_file(self.message, pdf, f"Screenshot PDF for {self.name}")

@@ -220,6 +220,7 @@ async def take_ss(video_file, ss_nb) -> bool:
                 "1",
                 "-threads",
                 f"{threads}",
+                "-y",
                 output,
             ]
             cap_time += interval
@@ -263,6 +264,7 @@ async def get_audio_thumbnail(audio_file):
         "copy",
         "-threads",
         f"{threads}",
+        "-y",
         output,
     ]
     try:
@@ -558,20 +560,23 @@ class FFMpeg:
                 "libx264",
                 "-preset",
                 "ultrafast",
+                "-crf",
+                "23",
                 "-c:a",
                 "aac",
                 "-threads",
                 f"{threads}",
                 "-movflags",
                 "+faststart",
+                "-y",
                 output,
             ]
             if ext == "mp4":
-                cmd[17:17] = ["-c:s", "mov_text"]
+                cmd[19:19] = ["-c:s", "mov_text"]
             elif ext == "mkv":
-                cmd[17:17] = ["-c:s", "ass"]
+                cmd[19:19] = ["-c:s", "ass"]
             else:
-                cmd[17:17] = ["-c:s", "copy"]
+                cmd[19:19] = ["-c:s", "copy"]
         else:
             cmd = [
                 "taskset",
@@ -593,6 +598,7 @@ class FFMpeg:
                 f"{threads}",
                 "-movflags",
                 "+faststart",
+                "-y",
                 output,
             ]
         if self._listener.is_cancelled:
@@ -958,10 +964,10 @@ class FFMpeg:
         durations = await gather(*[get_media_info(f) for f in parts])
         self._total_time = sum(d[0] for d in durations)
         dir = ospath.dirname(parts[0])
-        list_file = ospath.join(dir, "merge_list.txt")
+        list_file = ospath.join(dir, f"merge_list_{time()}.txt")
         async with aiofiles.open(list_file, "w") as f:
             for part in parts:
-                p = part.replace("'", "'\\''")
+                p = ospath.abspath(part).replace("'", "'\\''")
                 await f.write(f"file '{p}'\n")
         output = ospath.join(dir, output_name)
         cmd = [
@@ -984,6 +990,7 @@ class FFMpeg:
             "copy",
             "-threads",
             f"{threads}",
+            "-y",
             output,
         ]
         if self._listener.is_cancelled:
@@ -1087,6 +1094,10 @@ class FFMpeg:
             watermark_path,
             "-filter_complex",
             f"overlay={pos}",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "ultrafast",
             "-c:a",
             "copy",
             "-threads",
@@ -1163,24 +1174,21 @@ class FFMpeg:
         dir = ospath.dirname(video_file)
         output = ospath.join(dir, output_name)
 
-        # Calculate number of screenshots
-        w, h = map(int, layout.split('x'))
+        try:
+            w, h = map(int, layout.split('x'))
+        except Exception:
+            w, h = 3, 3
+            layout = "3x3"
         n = w * h
-
-        # We can use ffmpeg's tile filter
-        # First generate screenshots then tile them, or use a complex filter
-        interval = duration / (n + 1)
-
-        filter = f"select='not(mod(n,{int(interval)}))',scale=320:-1,tile={layout}"
-        # This is a bit complex for a single command without knowing frame rate.
-        # Alternative: use take_ss then tile them.
 
         ss_dir = await take_ss(video_file, n)
         if not ss_dir:
             return False
 
-        # Use ffmpeg to tile images in ss_dir
         cmd = [
+            "taskset",
+            "-c",
+            f"{cores}",
             BinConfig.FFMPEG_NAME,
             "-hide_banner",
             "-loglevel",
@@ -1197,7 +1205,7 @@ class FFMpeg:
             "-y"
         ]
 
-        process = await create_subprocess_exec(*cmd)
+        process = await create_subprocess_exec(*cmd, stdout=PIPE, stderr=PIPE)
         await process.wait()
 
         await rmtree(ss_dir, ignore_errors=True)

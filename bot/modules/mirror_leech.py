@@ -116,6 +116,10 @@ class Mirror(TaskListener):
             "-ut": False,
             "-yt": False,
             "-ft": False,
+            "-am": False,
+            "-vm": False,
+            "-vam": False,
+            "-vsm": False,
             "-i": 0,
             "-sp": 0,
             "link": "",
@@ -187,6 +191,14 @@ class Mirror(TaskListener):
         self.user_trans = args["-ut"]
         self.is_yt = args["-yt"]
         self.force_tools = args["-ft"]
+        if args["-am"]:
+            self.auto_merge = True
+        if args["-vm"]:
+            self.video_merge = True
+        if args["-vam"]:
+            self.video_audio_merge = True
+        if args["-vsm"]:
+            self.video_subtitle_merge = True
         self.metadata_dict = self.default_metadata_dict.copy()
         self.audio_metadata_dict = self.audio_metadata_dict.copy()
         self.video_metadata_dict = self.video_metadata_dict.copy()

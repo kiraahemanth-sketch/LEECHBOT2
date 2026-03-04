@@ -1,128 +1,128 @@
-from importlib import import_module
-from os import getenv
-
+import config
 
 class Config:
-    AS_DOCUMENT = False
-    AUTHORIZED_CHATS = ""
-    BASE_URL = ""
-    BASE_URL_PORT = 80
-    BOT_TOKEN = ""
-    HELPER_TOKENS = ""
-    BOT_MAX_TASKS = 0
-    BOT_PM = False
-    CMD_SUFFIX = ""
-    DEFAULT_LANG = "en"
-    DATABASE_URL = ""
-    DEFAULT_UPLOAD = "rc"
-    DELETE_LINKS = False
-    DEBRID_LINK_API = ""
-    DISABLE_TORRENTS = False
-    DISABLE_LEECH = False
-    DISABLE_BULK = False
-    DISABLE_MULTI = False
-    DISABLE_SEED = False
-    DISABLE_FF_MODE = False
-    EQUAL_SPLITS = False
-    EXCLUDED_EXTENSIONS = ""
-    FFMPEG_CMDS = {}
-    FILELION_API = ""
-    MEDIA_STORE = True
-    FORCE_SUB_IDS = ""
-    GOFILE_API = ""
-    GOFILE_FOLDER_ID = ""
-    PIXELDRAIN_KEY = ""
-    PROTECTED_API = ""
-    BUZZHEAVIER_API = ""
-    GDRIVE_ID = ""
-    GD_DESP = "Uploaded with ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Bot"
-    AUTHOR_NAME = "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡"
-    AUTHOR_URL = "https://t.me/ALONEKINGSTAR77"
-    INSTADL_API = ""
-    IMDB_TEMPLATE = ""
-    INCOMPLETE_TASK_NOTIFIER = False
-    INDEX_URL = ""
-    IS_TEAM_DRIVE = False
-    JD_EMAIL = ""
-    JD_PASS = ""
-    MEGA_EMAIL = ""
-    MEGA_PASSWORD = ""
-    DIRECT_LIMIT = 0
-    MEGA_LIMIT = 0
-    TORRENT_LIMIT = 0
-    GD_DL_LIMIT = 0
-    RC_DL_LIMIT = 0
-    CLONE_LIMIT = 0
-    JD_LIMIT = 0
-    NZB_LIMIT = 0
-    YTDLP_LIMIT = 0
-    PLAYLIST_LIMIT = 0
-    LEECH_LIMIT = 0
-    EXTRACT_LIMIT = 0
-    ARCHIVE_LIMIT = 0
-    STORAGE_LIMIT = 0
-    LEECH_DUMP_CHAT = ""
-    LINKS_LOG_ID = ""
-    MIRROR_LOG_ID = ""
-    CLEAN_LOG_MSG = False
-    LEECH_PREFIX = ""
-    LEECH_CAPTION = ""
-    LEECH_SUFFIX = ""
-    LEECH_FONT = ""
-    LEECH_SPLIT_SIZE = 2097152000
-    MEDIA_GROUP = False
-    HYBRID_LEECH = True
-    HYPER_THREADS = 0
-    HYDRA_IP = ""
-    HYDRA_API_KEY = ""
-    NAME_SWAP = ""
-    OWNER_ID = 0
-    QUEUE_ALL = 0
-    QUEUE_DOWNLOAD = 0
-    QUEUE_UPLOAD = 0
-    RCLONE_FLAGS = ""
-    RCLONE_PATH = ""
-    RCLONE_SERVE_URL = ""
-    SHOW_CLOUD_LINK = True
-    RCLONE_SERVE_USER = ""
-    RCLONE_SERVE_PASS = ""
-    RCLONE_SERVE_PORT = 8080
-    RSS_CHAT = ""
-    RSS_DELAY = 600
-    RSS_SIZE_LIMIT = 0
-    SEARCH_API_LINK = ""
-    SEARCH_LIMIT = 0
-    SEARCH_PLUGINS = []
-    SET_COMMANDS = True
-    STATUS_LIMIT = 10
-    STATUS_UPDATE_INTERVAL = 10
-    STOP_DUPLICATE = False
-    STREAMWISH_API = ""
-    SUDO_USERS = ""
-    TELEGRAM_API = 0
-    TELEGRAM_HASH = ""
-    TG_PROXY = None
-    THUMBNAIL_LAYOUT = ""
-    VERIFY_TIMEOUT = 0
-    LOGIN_PASS = ""
-    TORRENT_TIMEOUT = 0
-    TIMEZONE = "Asia/Kolkata"
-    USER_MAX_TASKS = 0
-    USER_TIME_INTERVAL = 0
-    UPLOAD_PATHS = {}
-    UPSTREAM_REPO = ""
-    UPSTREAM_BRANCH = "master"
-    UPDATE_PKGS = True
-    USENET_SERVERS = []
-    USER_SESSION_STRING = ""
-    USER_TRANSMISSION = True
-    USE_SERVICE_ACCOUNTS = False
-    WEB_PINCODE = True
-    YT_DLP_OPTIONS = {}
-    YT_DESP = "Uploaded with ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ bot"
-    YT_TAGS = ["telegram", "bot", "youtube"]
-    YT_CATEGORY_ID = 22
-    YT_PRIVACY_STATUS = "unlisted"
+    AS_DOCUMENT = getattr(config, 'AS_DOCUMENT', False)
+    AUTHORIZED_CHATS = getattr(config, 'AUTHORIZED_CHATS', "")
+    BASE_URL = getattr(config, 'BASE_URL', "")
+    BASE_URL_PORT = getattr(config, 'BASE_URL_PORT', 80)
+    BOT_TOKEN = getattr(config, 'BOT_TOKEN', "")
+    HELPER_TOKENS = getattr(config, 'HELPER_TOKENS', "")
+    BOT_MAX_TASKS = getattr(config, 'BOT_MAX_TASKS', 0)
+    BOT_PM = getattr(config, 'BOT_PM', False)
+    CMD_SUFFIX = getattr(config, 'CMD_SUFFIX', "")
+    DEFAULT_LANG = getattr(config, 'DEFAULT_LANG', "en")
+    DATABASE_URL = getattr(config, 'DATABASE_URI', "")
+    DEFAULT_UPLOAD = getattr(config, 'DEFAULT_UPLOAD', "rc")
+    DELETE_LINKS = getattr(config, 'DELETE_LINKS', False)
+    DEBRID_LINK_API = getattr(config, 'DEBRID_LINK_API', "")
+    DISABLE_TORRENTS = getattr(config, 'DISABLE_TORRENTS', False)
+    DISABLE_LEECH = getattr(config, 'DISABLE_LEECH', False)
+    DISABLE_BULK = getattr(config, 'DISABLE_BULK', False)
+    DISABLE_MULTI = getattr(config, 'DISABLE_MULTI', False)
+    DISABLE_SEED = getattr(config, 'DISABLE_SEED', False)
+    DISABLE_FF_MODE = getattr(config, 'DISABLE_FF_MODE', False)
+    EQUAL_SPLITS = getattr(config, 'EQUAL_SPLITS', False)
+    EXCLUDED_EXTENSIONS = getattr(config, 'EXCLUDED_EXTENSIONS', "")
+    FFMPEG_CMDS = getattr(config, 'FFMPEG_CMDS', {})
+    FILELION_API = getattr(config, 'FILELION_API', "")
+    MEDIA_STORE = getattr(config, 'MEDIA_STORE', True)
+    FORCE_SUB_IDS = getattr(config, 'FORCE_SUB_IDS', "")
+    GOFILE_API = getattr(config, 'GOFILE_API', "")
+    GOFILE_FOLDER_ID = getattr(config, 'GOFILE_FOLDER_ID', "")
+    PIXELDRAIN_KEY = getattr(config, 'PIXELDRAIN_KEY', "")
+    PROTECTED_API = getattr(config, 'PROTECTED_API', "")
+    BUZZHEAVIER_API = getattr(config, 'BUZZHEAVIER_API', "")
+    GDRIVE_ID = getattr(config, 'GDRIVE_ID', "")
+    GD_DESP = getattr(config, 'GD_DESP', "Uploaded with ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Bot")
+    AUTHOR_NAME = getattr(config, 'AUTHOR_NAME', "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡")
+    AUTHOR_URL = getattr(config, 'AUTHOR_URL', "https://t.me/ALONEKINGSTAR77")
+    INSTADL_API = getattr(config, 'INSTADL_API', "")
+    IMDB_TEMPLATE = getattr(config, 'IMDB_TEMPLATE', "")
+    INCOMPLETE_TASK_NOTIFIER = getattr(config, 'INCOMPLETE_TASK_NOTIFIER', False)
+    INDEX_URL = getattr(config, 'INDEX_URL', "")
+    IS_TEAM_DRIVE = getattr(config, 'IS_TEAM_DRIVE', False)
+    JD_EMAIL = getattr(config, 'JD_EMAIL', "")
+    JD_PASS = getattr(config, 'JD_PASS', "")
+    MEGA_EMAIL = getattr(config, 'MEGA_EMAIL', "")
+    MEGA_PASSWORD = getattr(config, 'MEGA_PASSWORD', "")
+    DIRECT_LIMIT = getattr(config, 'DIRECT_LIMIT', 0)
+    MEGA_LIMIT = getattr(config, 'MEGA_LIMIT', 0)
+    TORRENT_LIMIT = getattr(config, 'TORRENT_LIMIT', 0)
+    GD_DL_LIMIT = getattr(config, 'GD_DL_LIMIT', 0)
+    RC_DL_LIMIT = getattr(config, 'RC_DL_LIMIT', 0)
+    CLONE_LIMIT = getattr(config, 'CLONE_LIMIT', 0)
+    JD_LIMIT = getattr(config, 'JD_LIMIT', 0)
+    NZB_LIMIT = getattr(config, 'NZB_LIMIT', 0)
+    YTDLP_LIMIT = getattr(config, 'YTDLP_LIMIT', 0)
+    PLAYLIST_LIMIT = getattr(config, 'PLAYLIST_LIMIT', 0)
+    LEECH_LIMIT = getattr(config, 'LEECH_LIMIT', 0)
+    EXTRACT_LIMIT = getattr(config, 'EXTRACT_LIMIT', 0)
+    ARCHIVE_LIMIT = getattr(config, 'ARCHIVE_LIMIT', 0)
+    STORAGE_LIMIT = getattr(config, 'STORAGE_LIMIT', 0)
+    LEECH_DUMP_CHAT = getattr(config, 'LEECH_DUMP_CHAT', "")
+    LINKS_LOG_ID = getattr(config, 'LINKS_LOG_ID', "")
+    MIRROR_LOG_ID = getattr(config, 'MIRROR_LOG_ID', "")
+    CLEAN_LOG_MSG = getattr(config, 'CLEAN_LOG_MSG', False)
+    LEECH_PREFIX = getattr(config, 'LEECH_PREFIX', "")
+    LEECH_CAPTION = getattr(config, 'LEECH_CAPTION', "")
+    LEECH_SUFFIX = getattr(config, 'LEECH_SUFFIX', "")
+    LEECH_FONT = getattr(config, 'LEECH_FONT', "")
+    LEECH_SPLIT_SIZE = getattr(config, 'LEECH_SPLIT_SIZE', 2097152000)
+    MEDIA_GROUP = getattr(config, 'MEDIA_GROUP', False)
+    HYBRID_LEECH = getattr(config, 'HYBRID_LEECH', True)
+    HYPER_THREADS = getattr(config, 'HYPER_THREADS', 0)
+    HYDRA_IP = getattr(config, 'HYDRA_IP', "")
+    HYDRA_API_KEY = getattr(config, 'HYDRA_API_KEY', "")
+    NAME_SWAP = getattr(config, 'NAME_SWAP', "")
+    OWNER_ID = getattr(config, 'ADMIN', 0)
+    QUEUE_ALL = getattr(config, 'QUEUE_ALL', 0)
+    QUEUE_DOWNLOAD = getattr(config, 'QUEUE_DOWNLOAD', 0)
+    QUEUE_UPLOAD = getattr(config, 'QUEUE_UPLOAD', 0)
+    RCLONE_FLAGS = getattr(config, 'RCLONE_FLAGS', "")
+    RCLONE_PATH = getattr(config, 'RCLONE_PATH', "")
+    RCLONE_SERVE_URL = getattr(config, 'RCLONE_SERVE_URL', "")
+    SHOW_CLOUD_LINK = getattr(config, 'SHOW_CLOUD_LINK', True)
+    RCLONE_SERVE_USER = getattr(config, 'RCLONE_SERVE_USER', "")
+    RCLONE_SERVE_PASS = getattr(config, 'RCLONE_SERVE_PASS', "")
+    RCLONE_SERVE_PORT = getattr(config, 'RCLONE_SERVE_PORT', 8080)
+    RSS_CHAT = getattr(config, 'RSS_CHAT', "")
+    RSS_DELAY = getattr(config, 'RSS_DELAY', 600)
+    RSS_SIZE_LIMIT = getattr(config, 'RSS_SIZE_LIMIT', 0)
+    SEARCH_API_LINK = getattr(config, 'SEARCH_API_LINK', "")
+    SEARCH_LIMIT = getattr(config, 'SEARCH_LIMIT', 0)
+    SEARCH_PLUGINS = getattr(config, 'SEARCH_PLUGINS', [])
+    SET_COMMANDS = getattr(config, 'SET_COMMANDS', True)
+    STATUS_LIMIT = getattr(config, 'STATUS_LIMIT', 10)
+    STATUS_UPDATE_INTERVAL = getattr(config, 'STATUS_UPDATE_INTERVAL', 10)
+    STOP_DUPLICATE = getattr(config, 'STOP_DUPLICATE', False)
+    STREAMWISH_API = getattr(config, 'STREAMWISH_API', "")
+    SUDO_USERS = getattr(config, 'SUDO_USERS', [])
+    TELEGRAM_API = getattr(config, 'API_ID', 0)
+    TELEGRAM_HASH = getattr(config, 'API_HASH', "")
+    TG_PROXY = getattr(config, 'TG_PROXY', None)
+    THUMBNAIL_LAYOUT = getattr(config, 'THUMBNAIL_LAYOUT', "")
+    VERIFY_TIMEOUT = getattr(config, 'VERIFY_TIMEOUT', 0)
+    LOGIN_PASS = getattr(config, 'LOGIN_PASS', "")
+    TORRENT_TIMEOUT = getattr(config, 'TORRENT_TIMEOUT', 0)
+    TIMEZONE = getattr(config, 'TIMEZONE', "Asia/Kolkata")
+    USER_MAX_TASKS = getattr(config, 'USER_MAX_TASKS', 0)
+    USER_TIME_INTERVAL = getattr(config, 'USER_TIME_INTERVAL', 0)
+    UPLOAD_PATHS = getattr(config, 'UPLOAD_PATHS', {})
+    UPSTREAM_REPO = getattr(config, 'UPSTREAM_REPO', "")
+    UPSTREAM_BRANCH = getattr(config, 'UPSTREAM_BRANCH', "master")
+    UPDATE_PKGS = getattr(config, 'UPDATE_PKGS', True)
+    USENET_SERVERS = getattr(config, 'USENET_SERVERS', [])
+    USER_SESSION_STRING = getattr(config, 'SESSION', "")
+    USER_TRANSMISSION = getattr(config, 'USER_TRANSMISSION', True)
+    USE_SERVICE_ACCOUNTS = getattr(config, 'USE_SERVICE_ACCOUNTS', False)
+    WEB_PINCODE = getattr(config, 'WEB_PINCODE', True)
+    YT_DLP_OPTIONS = getattr(config, 'YT_DLP_OPTIONS', {})
+    YT_DESP = getattr(config, 'YT_DESP', "Uploaded with ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ bot")
+    YT_TAGS = getattr(config, 'YT_TAGS', ["telegram", "bot", "youtube"])
+    YT_CATEGORY_ID = getattr(config, 'YT_CATEGORY_ID', 22)
+    YT_PRIVACY_STATUS = getattr(config, 'YT_PRIVACY_STATUS', "unlisted")
+    LOG_CHANNEL = getattr(config, 'LOG_CHANNEL', 0)
+    CHANNEL = getattr(config, 'CHANNEL', "")
 
     @classmethod
     def get(cls, key):
@@ -130,11 +130,7 @@ class Config:
 
     @classmethod
     def set(cls, key, value):
-        if hasattr(cls, key):
-            value = cls._convert_env_type(key, value)
-            setattr(cls, key, value)
-        else:
-            raise KeyError(f"{key} is not a valid configuration key.")
+        setattr(cls, key, value)
 
     @classmethod
     def get_all(cls):
@@ -146,109 +142,16 @@ class Config:
 
     @classmethod
     def load(cls):
-        cls.load_config()
-        cls.load_env()
+        # Mandatory validation
+        errors = []
+        if not cls.TELEGRAM_API: errors.append("API_ID")
+        if not cls.TELEGRAM_HASH: errors.append("API_HASH")
+        if not cls.BOT_TOKEN: errors.append("BOT_TOKEN")
+        if not cls.DATABASE_URL: errors.append("DATABASE_URI")
+        if not cls.OWNER_ID: errors.append("ADMIN")
 
-    @classmethod
-    def load_config(cls):
-        try:
-            settings = import_module("config")
-        except ModuleNotFoundError:
-            return
-        for attr in dir(settings):
-            if hasattr(cls, attr):
-                value = getattr(settings, attr)
-                if not value:
-                    continue
-                if isinstance(value, str):
-                    value = value.strip()
-                if attr == "DEFAULT_UPLOAD" and value != "gd":
-                    value = "rc"
-                elif attr in [
-                    "BASE_URL",
-                    "RCLONE_SERVE_URL",
-                    "INDEX_URL",
-                    "SEARCH_API_LINK",
-                ]:
-                    if value:
-                        value = value.strip("/")
-                elif attr == "USENET_SERVERS":
-                    try:
-                        if not value[0].get("host"):
-                            continue
-                    except Exception:
-                        continue
-                setattr(cls, attr, value)
-        for key in ["BOT_TOKEN", "OWNER_ID", "TELEGRAM_API", "TELEGRAM_HASH"]:
-            value = getattr(cls, key)
-            if isinstance(value, str):
-                value = value.strip()
-            if not value:
-                raise ValueError(f"{key} variable is missing!")
-
-    @classmethod
-    def load_env(cls):
-        config_vars = cls.get_all()
-        for key in config_vars:
-            env_value = getenv(key)
-            if env_value is not None:
-                converted_value = cls._convert_env_type(key, env_value)
-                cls.set(key, converted_value)
-
-    @classmethod
-    def _convert_env_type(cls, key, value):
-        original_value = getattr(cls, key, None)
-        if original_value is None:
-            return value
-        elif isinstance(original_value, bool):
-            if isinstance(value, bool):
-                return value
-            return str(value).lower() in ("true", "1", "yes")
-        elif isinstance(original_value, int):
-            if isinstance(value, int):
-                return value
-            try:
-                return int(value)
-            except (ValueError, TypeError):
-                return original_value
-        elif isinstance(original_value, float):
-            if isinstance(value, float):
-                return value
-            try:
-                return float(value)
-            except (ValueError, TypeError):
-                return original_value
-        return value
-
-    @classmethod
-    def load_dict(cls, config_dict):
-        for key, value in config_dict.items():
-            if hasattr(cls, key):
-                if key == "DEFAULT_UPLOAD" and value != "gd":
-                    value = "rc"
-                elif key in [
-                    "BASE_URL",
-                    "RCLONE_SERVE_URL",
-                    "INDEX_URL",
-                    "SEARCH_API_LINK",
-                ]:
-                    if value:
-                        value = value.strip("/")
-                elif key == "USENET_SERVERS":
-                    try:
-                        if not value[0].get("host"):
-                            value = []
-                    except Exception:
-                        value = []
-                value = cls._convert_env_type(key, value)
-                setattr(cls, key, value)
-        for key in ["BOT_TOKEN", "OWNER_ID", "TELEGRAM_API", "TELEGRAM_HASH"]:
-            value = getattr(cls, key)
-            if isinstance(value, str):
-                value = value.strip()
-            if not value:
-                raise ValueError(f"{key} variable is missing!")
-
+        if errors:
+            raise ValueError(f"Missing mandatory variables in config.py: {', '.join(errors)}")
 
 class BinConfig:
     ARIA2_NAME = "blitzfetcher"

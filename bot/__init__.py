@@ -1,12 +1,11 @@
 # ruff: noqa: E402
 
 from uvloop import install
-
 install()
 
-from subprocess import run as srun
-from os import getcwd
-from asyncio import Lock, new_event_loop, set_event_loop
+import asyncio
+from os import getcwd, cpu_count, path as ospath
+from time import time
 from logging import (
     ERROR,
     INFO,
@@ -16,14 +15,12 @@ from logging import (
     basicConfig,
     getLogger,
 )
-from os import cpu_count, path as ospath
-from time import time
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
 from .core.config_manager import BinConfig
-from sabnzbdapi import SabnzbdClient
+from .sabnzbdapi import SabnzbdClient
 
+# Suppress noisy logs
 getLogger("requests").setLevel(WARNING)
 getLogger("urllib3").setLevel(WARNING)
 getLogger("pyrogram").setLevel(ERROR)
@@ -31,25 +28,23 @@ getLogger("aiohttp").setLevel(ERROR)
 getLogger("apscheduler").setLevel(ERROR)
 getLogger("httpx").setLevel(WARNING)
 getLogger("pymongo").setLevel(WARNING)
-getLogger("aiohttp").setLevel(WARNING)
-
 
 bot_start_time = time()
 
-bot_loop = new_event_loop()
-set_event_loop(bot_loop)
+# We will use the loop from asyncio.run() in main.py
+bot_loop = None
 
 basicConfig(
-    format="[%(asctime)s] [%(levelname)s] - %(message)s",  #  [%(filename)s:%(lineno)d]
+    format="[%(asctime)s] [%(levelname)s] - %(message)s",
     datefmt="%d-%b-%y %I:%M:%S %p",
     handlers=[FileHandler("log.txt"), StreamHandler()],
     level=INFO,
 )
 
 LOGGER = getLogger(__name__)
-cpu_no = cpu_count()
+
+cpu_no = cpu_count() or 4
 threads = max(1, cpu_no)
-cores = ",".join(str(i) for i in range(max(1, cpu_no // 2)))
 
 bot_cache = {}
 DOWNLOAD_DIR = ospath.join(getcwd(), "downloads/")
@@ -67,17 +62,7 @@ status_dict = {}
 task_dict = {}
 rss_dict = {}
 shortener_dict = {}
-var_list = [
-    "BOT_TOKEN",
-    "TELEGRAM_API",
-    "TELEGRAM_HASH",
-    "OWNER_ID",
-    "DATABASE_URL",
-    "BASE_URL",
-    "UPSTREAM_REPO",
-    "UPSTREAM_BRANCH",
-    "UPDATE_PKGS",
-]
+
 auth_chats = {}
 excluded_extensions = ["aria2", "!qB"]
 drives_names = []
@@ -87,19 +72,28 @@ sudo_users = []
 non_queued_dl = set()
 non_queued_up = set()
 multi_tags = set()
-task_dict_lock = Lock()
-queue_dict_lock = Lock()
-qb_listener_lock = Lock()
-nzb_listener_lock = Lock()
-jd_listener_lock = Lock()
-cpu_eater_lock = Lock()
-same_directory_lock = Lock()
+
+task_dict_lock = asyncio.Lock()
+queue_dict_lock = asyncio.Lock()
+qb_listener_lock = asyncio.Lock()
+nzb_listener_lock = asyncio.Lock()
+jd_listener_lock = asyncio.Lock()
+cpu_eater_lock = asyncio.Lock()
+same_directory_lock = asyncio.Lock()
 
 sabnzbd_client = SabnzbdClient(
     host="http://localhost",
     api_key="admin",
     port="8070",
 )
-srun([BinConfig.QBIT_NAME, "-d", f"--profile={getcwd()}"], check=False)
 
-scheduler = AsyncIOScheduler(event_loop=bot_loop)
+scheduler = AsyncIOScheduler()
+
+async def start_qbittorrent():
+    try:
+        cmd = [BinConfig.QBIT_NAME, "-d", f"--profile={getcwd()}"]
+        process = await asyncio.create_subprocess_exec(*cmd)
+        await process.wait()
+        LOGGER.info("qBittorrent started.")
+    except Exception as e:
+        LOGGER.error(f"Failed to start qBittorrent: {e}")

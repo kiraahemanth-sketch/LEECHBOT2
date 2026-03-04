@@ -6,7 +6,7 @@ from aiofiles import open as aiopen
 from aiofiles.os import listdir, makedirs, path, rename
 from aioshutil import rmtree
 
-from myjd import MyJdApi
+from bot.myjd import MyJdApi
 
 from .. import LOGGER
 from ..helper.ext_utils.bot_utils import cmd_exec, new_task

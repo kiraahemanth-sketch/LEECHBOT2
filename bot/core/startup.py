@@ -1,12 +1,11 @@
 from asyncio import create_subprocess_exec, create_subprocess_shell, sleep
-from importlib import import_module
-from os import environ, getenv, path as ospath
+from os import getenv, path as ospath
 
 from aiofiles import open as aiopen
 from aiofiles.os import makedirs, remove, path as aiopath
 from aioshutil import rmtree
 
-from sabnzbdapi.exception import APIResponseError
+from ..sabnzbdapi.exception import APIResponseError
 
 from .. import (
     LOGGER,
@@ -16,7 +15,6 @@ from .. import (
     drives_names,
     index_urls,
     shortener_dict,
-    var_list,
     user_data,
     excluded_extensions,
     nzb_options,
@@ -41,7 +39,8 @@ async def update_qb_options():
             return
         opt = await TorrentManager.qbittorrent.app.preferences()
         qbit_options.update(opt)
-        del qbit_options["listen_port"]
+        if "listen_port" in qbit_options:
+            del qbit_options["listen_port"]
         for k in list(qbit_options.keys()):
             if k.startswith("rss"):
                 del qbit_options[k]
@@ -76,6 +75,7 @@ async def update_nzb_options():
 
 
 async def load_settings():
+    # Only load data that doesn't override config.py variables
     if not Config.DATABASE_URL:
         return
     for p in ["thumbnails", "tokens", "rclone", "watermarks"]:
@@ -83,50 +83,9 @@ async def load_settings():
             await rmtree(p, ignore_errors=True)
     await database.connect()
     if database.db is not None:
-        BOT_ID = Config.BOT_TOKEN.split(":", 1)[0]
-        try:
-            settings = import_module("config")
-            config_file = {
-                key: value.strip() if isinstance(value, str) else value
-                for key, value in vars(settings).items()
-                if not key.startswith("__")
-            }
-        except ModuleNotFoundError:
-            config_file = {}
-        config_file.update(
-            {
-                key: value.strip() if isinstance(value, str) else value
-                for key, value in environ.items()
-                if key in var_list
-            }
-        )
+        BOT_ID = TgClient.ID
 
-        old_config = await database.db.settings.deployConfig.find_one(
-            {"_id": BOT_ID}, {"_id": 0}
-        )
-        if old_config is None:
-            await database.db.settings.deployConfig.replace_one(
-                {"_id": BOT_ID}, config_file, upsert=True
-            )
-        if old_config and old_config != config_file:
-            LOGGER.info("Saving.. Deploy Config imported from Bot")
-            await database.db.settings.deployConfig.replace_one(
-                {"_id": BOT_ID}, config_file, upsert=True
-            )
-            config_dict = (
-                await database.db.settings.config.find_one({"_id": BOT_ID}, {"_id": 0})
-                or {}
-            )
-            config_dict.update(config_file)
-            if config_dict:
-                Config.load_dict(config_dict)
-        else:
-            LOGGER.info("Updating.. Saved Config imported from MongoDB")
-            config_dict = await database.db.settings.config.find_one(
-                {"_id": BOT_ID}, {"_id": 0}
-            )
-            if config_dict:
-                Config.load_dict(config_dict)
+        # We skip loading deployConfig and config from DB to strictly use config.py
 
         if pf_dict := await database.db.settings.files.find_one(
             {"_id": BOT_ID}, {"_id": 0}
@@ -155,6 +114,8 @@ async def load_settings():
                 await remove("sabnzbd/SABnzbd.ini.bak")
             ((key, value),) = nzb_opt.items()
             file_ = key.replace("__", ".")
+            if not ospath.exists("sabnzbd"):
+                await makedirs("sabnzbd")
             async with aiopen(f"sabnzbd/{file_}", "wb+") as f:
                 await f.write(value)
             LOGGER.info("Loaded.. Sabnzbd Data from MongoDB")
@@ -176,16 +137,10 @@ async def load_settings():
                     dir_path = ospath.dirname(file_path)
                     if not await aiopath.exists(dir_path):
                         await makedirs(dir_path)
-                    if file_path.startswith("cookies/") and file_path.endswith(".txt"):
-                        async with aiopen(file_path, "wb") as f:
-                            if isinstance(content, str):
-                                content = content.encode("utf-8")
-                            await f.write(content)
-                    else:
-                        async with aiopen(file_path, "wb+") as f:
-                            if isinstance(content, str):
-                                content = content.encode("utf-8")
-                            await f.write(content)
+                    async with aiopen(file_path, "wb+") as f:
+                        if isinstance(content, str):
+                            content = content.encode("utf-8")
+                        await f.write(content)
 
                 for key, path in paths.items():
                     if row.get(key):
@@ -206,6 +161,7 @@ async def load_settings():
 async def save_settings():
     if database.db is None:
         return
+    # We can still save settings to DB, but they won't override config.py on startup
     config_file = Config.get_all()
     await database.db.settings.config.update_one(
         {"_id": TgClient.ID}, {"$set": config_file}, upsert=True
@@ -217,11 +173,12 @@ async def save_settings():
     if await database.db.settings.qbittorrent.find_one({"_id": TgClient.ID}) is None:
         await database.save_qbit_settings()
     if await database.db.settings.nzb.find_one({"_id": TgClient.ID}) is None:
-        async with aiopen("sabnzbd/SABnzbd.ini", "rb+") as pf:
-            nzb_conf = await pf.read()
-        await database.db.settings.nzb.update_one(
-            {"_id": TgClient.ID}, {"$set": {"SABnzbd__ini": nzb_conf}}, upsert=True
-        )
+        if ospath.exists("sabnzbd/SABnzbd.ini"):
+            async with aiopen("sabnzbd/SABnzbd.ini", "rb+") as pf:
+                nzb_conf = await pf.read()
+            await database.db.settings.nzb.update_one(
+                {"_id": TgClient.ID}, {"$set": {"SABnzbd__ini": nzb_conf}}, upsert=True
+            )
 
 
 async def update_variables():
@@ -238,8 +195,9 @@ async def update_variables():
     )
 
     if Config.AUTHORIZED_CHATS:
-        aid = Config.AUTHORIZED_CHATS.split()
+        aid = Config.AUTHORIZED_CHATS if isinstance(Config.AUTHORIZED_CHATS, list) else Config.AUTHORIZED_CHATS.split()
         for id_ in aid:
+            id_ = str(id_)
             chat_id, *thread_ids = id_.split("|")
             chat_id = int(chat_id.strip())
             if thread_ids:
@@ -249,9 +207,9 @@ async def update_variables():
                 auth_chats[chat_id] = []
 
     if Config.SUDO_USERS:
-        aid = Config.SUDO_USERS.split()
+        aid = Config.SUDO_USERS if isinstance(Config.SUDO_USERS, list) else Config.SUDO_USERS.split()
         for id_ in aid:
-            sudo_users.append(int(id_.strip()))
+            sudo_users.append(int(str(id_).strip()))
 
     if Config.EXCLUDED_EXTENSIONS:
         fx = Config.EXCLUDED_EXTENSIONS.split()
@@ -264,32 +222,18 @@ async def update_variables():
         drives_ids.append(Config.GDRIVE_ID)
         index_urls.append(Config.INDEX_URL)
 
-    if not Config.IMDB_TEMPLATE:
-        Config.IMDB_TEMPLATE = """
-<b>Title: </b> {title} [{year}]
-<b>Also Known As:</b> {aka}
-<b>Rating ⭐️:</b> <i>{rating}</i>
-<b>Release Info: </b> <a href="{url_releaseinfo}">{release_date}</a>
-<b>Genre: </b>{genres}
-<b>IMDb URL:</b> {url}
-<b>Language: </b>{languages}
-<b>Country of Origin : </b> {countries}
-
-<b>Story Line: </b><code>{plot}</code>
-
-<a href="{url_cast}">Read More ...</a>"""
-
     if await aiopath.exists("list_drives.txt"):
         async with aiopen("list_drives.txt", "r+") as f:
             lines = await f.readlines()
             for line in lines:
                 temp = line.split()
-                drives_ids.append(temp[1])
-                drives_names.append(temp[0].replace("_", " "))
-                if len(temp) > 2:
-                    index_urls.append(temp[2])
-                else:
-                    index_urls.append("")
+                if len(temp) >= 2:
+                    drives_ids.append(temp[1])
+                    drives_names.append(temp[0].replace("_", " "))
+                    if len(temp) > 2:
+                        index_urls.append(temp[2])
+                    else:
+                        index_urls.append("")
 
     if await aiopath.exists("shortener.txt"):
         async with aiopen("shortener.txt", "r+") as f:
@@ -307,16 +251,9 @@ async def load_configurations():
 
     await (
         await create_subprocess_shell(
-            f"chmod 600 .netrc && cp .netrc /root/.netrc && chmod +x setpkgs.sh && ./setpkgs.sh {BinConfig.ARIA2_NAME} {BinConfig.SABNZBD_NAME}"
+            f"chmod 600 .netrc && cp .netrc /root/.netrc"
         )
     ).wait()
-
-    PORT = getenv("PORT", "") or Config.BASE_URL_PORT
-    if PORT:
-        await create_subprocess_shell(
-            f"gunicorn -k uvicorn.workers.UvicornWorker -w 1 web.wserver:app --bind 0.0.0.0:{PORT}"
-        )
-        await create_subprocess_shell("python3 cron_boot.py")
 
     if await aiopath.exists("cfg.zip"):
         if await aiopath.exists("/JDownloader/cfg"):

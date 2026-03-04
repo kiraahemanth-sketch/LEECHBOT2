@@ -1,4 +1,3 @@
-asyncio
 aiofiles
 aiohttp
 aioshutil
@@ -38,6 +37,8 @@ tenacity
 tgcrypto
 urllib3
 uvicorn
-uvloop==0.21.0
+uvloop
 xattr
 yt-dlp[default,curl-cffi]
+pyrogram
+cryptography

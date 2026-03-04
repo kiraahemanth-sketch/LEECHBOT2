@@ -1,5 +1,5 @@
 from importlib import import_module
-from os import getenv
+from os import getenv, path as ospath
 
 
 class Config:
@@ -146,8 +146,19 @@ class Config:
 
     @classmethod
     def load(cls):
+        if not ospath.exists("config.py"):
+            raise FileNotFoundError("config.py is missing! Please create it using config_sample.py")
         cls.load_config()
-        cls.load_env()
+        # Fallback to env for crucial variables if they are still missing after loading config.py
+        for key in ["BOT_TOKEN", "OWNER_ID", "TELEGRAM_API", "TELEGRAM_HASH", "DATABASE_URL"]:
+            if not getattr(cls, key):
+                env_val = getenv(key)
+                if env_val:
+                    cls.set(key, env_val)
+
+        for key in ["BOT_TOKEN", "OWNER_ID", "TELEGRAM_API", "TELEGRAM_HASH", "DATABASE_URL"]:
+            if not getattr(cls, key):
+                raise ValueError(f"{key} variable is missing in config.py and environment!")
 
     @classmethod
     def load_config(cls):
@@ -158,7 +169,7 @@ class Config:
         for attr in dir(settings):
             if hasattr(cls, attr):
                 value = getattr(settings, attr)
-                if not value:
+                if value == "" or value is None:
                     continue
                 if isinstance(value, str):
                     value = value.strip()
@@ -179,21 +190,6 @@ class Config:
                     except Exception:
                         continue
                 setattr(cls, attr, value)
-        for key in ["BOT_TOKEN", "OWNER_ID", "TELEGRAM_API", "TELEGRAM_HASH"]:
-            value = getattr(cls, key)
-            if isinstance(value, str):
-                value = value.strip()
-            if not value:
-                raise ValueError(f"{key} variable is missing!")
-
-    @classmethod
-    def load_env(cls):
-        config_vars = cls.get_all()
-        for key in config_vars:
-            env_value = getenv(key)
-            if env_value is not None:
-                converted_value = cls._convert_env_type(key, env_value)
-                cls.set(key, converted_value)
 
     @classmethod
     def _convert_env_type(cls, key, value):
@@ -242,17 +238,11 @@ class Config:
                         value = []
                 value = cls._convert_env_type(key, value)
                 setattr(cls, key, value)
-        for key in ["BOT_TOKEN", "OWNER_ID", "TELEGRAM_API", "TELEGRAM_HASH"]:
-            value = getattr(cls, key)
-            if isinstance(value, str):
-                value = value.strip()
-            if not value:
-                raise ValueError(f"{key} variable is missing!")
 
 
 class BinConfig:
-    ARIA2_NAME = "blitzfetcher"
-    QBIT_NAME = "stormtorrent"
-    FFMPEG_NAME = "mediaforge"
-    RCLONE_NAME = "ghostdrive"
-    SABNZBD_NAME = "newsripper"
+    ARIA2_NAME = "aria2c"
+    QBIT_NAME = "qbittorrent-nox"
+    FFMPEG_NAME = "ffmpeg"
+    RCLONE_NAME = "rclone"
+    SABNZBD_NAME = "sabnzbdplus"
